@@ -1,19 +1,35 @@
 <template>
-  <div class="min-h-screen bg-neutral-50">
+  <div class="min-h-screen bg-gray-50" :class="{ 'overflow-hidden': sidebarOpen }">
+    <!-- Mobile menu overlay -->
+    <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"></div>
+    
     <!-- Sidebar -->
-    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
-      <!-- Logo -->
-      <div class="flex items-center h-16 px-6 border-b border-neutral-200">
+    <div :class="[
+      'fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out flex flex-col',
+      sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+      'lg:translate-x-0'
+    ]">
+      <!-- Logo and Close Button -->
+      <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200">
         <div class="flex items-center">
           <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-            <span class="text-white font-bold text-sm">BK</span>
+            <span class="text-white font-bold text-sm">SQ</span>
           </div>
-          <span class="ml-3 text-lg font-semibold text-neutral-900">BistroKeep</span>
+          <span class="ml-3 text-lg font-semibold text-gray-900">Synthesq</span>
         </div>
+        <!-- Close button for mobile -->
+        <button 
+          @click="sidebarOpen = false" 
+          class="lg:hidden p-2 -mr-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
-      <!-- Navigation -->
-      <nav class="mt-6 px-3">
+      <!-- Navigation - Scrollable -->
+      <nav class="flex-1 overflow-y-auto mt-6 px-3 pb-4">
         <div class="space-y-1">
           <!-- Dashboard -->
           <NuxtLink 
@@ -29,84 +45,202 @@
 
           <!-- CRM Section -->
           <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-neutral-400 uppercase tracking-wider">CRM</p>
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">CRM</p>
             <div class="mt-2 space-y-1">
               <NuxtLink 
-                to="/customers" 
-                :class="$route.path.startsWith('/customers') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                to="/crm/leads" 
+                :class="$route.path.startsWith('/crm/leads') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                Leads
+              </NuxtLink>
+
+              <NuxtLink 
+                to="/crm/opportunities" 
+                :class="$route.path.startsWith('/crm/opportunities') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                Opportunities
+              </NuxtLink>
+              
+              <NuxtLink 
+                to="/crm/customers" 
+                :class="$route.path.startsWith('/crm/customers') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
               >
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                 </svg>
                 Customers
               </NuxtLink>
-              
-              <NuxtLink 
-                to="/leads" 
-                :class="$route.path.startsWith('/leads') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
-              >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-                Leads & Opportunities
-              </NuxtLink>
             </div>
           </div>
 
           <!-- Sales Section -->
           <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-neutral-400 uppercase tracking-wider">Sales</p>
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sales</p>
             <div class="mt-2 space-y-1">
               <NuxtLink 
-                to="/sales" 
-                :class="$route.path.startsWith('/sales') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                to="/sales/orders" 
+                :class="$route.path.startsWith('/sales/orders') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
               >
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                Orders & Sales
+                Orders
+              </NuxtLink>
+
+              <NuxtLink 
+                to="/sales/invoices" 
+                :class="$route.path.startsWith('/sales/invoices') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Invoices
+              </NuxtLink>
+
+              <NuxtLink 
+                to="/sales/payments" 
+                :class="$route.path.startsWith('/sales/payments') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                Payments
               </NuxtLink>
             </div>
           </div>
 
-          <!-- ERP Section -->
+          <!-- Operations Section -->
           <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-neutral-400 uppercase tracking-wider">ERP</p>
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Operations</p>
             <div class="mt-2 space-y-1">
               <NuxtLink 
-                to="/inventory" 
-                :class="$route.path.startsWith('/inventory') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                to="/operations/products" 
+                :class="$route.path.startsWith('/operations/products') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
               >
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
-                Inventory
+                Products
               </NuxtLink>
               
               <NuxtLink 
-                to="/finance" 
-                :class="$route.path.startsWith('/finance') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                to="/operations/inventory" 
+                :class="$route.path.startsWith('/operations/inventory') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
               >
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 3v10a2 2 0 002 2h8a2 2 0 002-2V7M9 7h6" />
                 </svg>
-                Finance
+                Inventory
+              </NuxtLink>
+
+              <NuxtLink 
+                to="/operations/procurement" 
+                :class="$route.path.startsWith('/operations/procurement') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2v0a2 2 0 01-2-2v-1" />
+                </svg>
+                Procurement
               </NuxtLink>
             </div>
           </div>
 
-          <!-- Analytics -->
+          <!-- Finance Section -->
           <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-neutral-400 uppercase tracking-wider">Analytics</p>
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Finance</p>
             <div class="mt-2 space-y-1">
               <NuxtLink 
-                to="/reports" 
-                :class="$route.path.startsWith('/reports') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                to="/finance/accounting" 
+                :class="$route.path.startsWith('/finance/accounting') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
+                Accounting
+              </NuxtLink>
+            </div>
+          </div>
+
+          <!-- People Section -->
+          <div class="pt-4">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">People</p>
+            <div class="mt-2 space-y-1">
+              <NuxtLink 
+                to="/people/hr" 
+                :class="$route.path.startsWith('/people/hr') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                Human Resources
+              </NuxtLink>
+            </div>
+          </div>
+
+          <!-- Automation Section -->
+          <div class="pt-4">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Automation</p>
+            <div class="mt-2 space-y-1">
+              <NuxtLink 
+                to="/automation/workflows" 
+                :class="$route.path.startsWith('/automation/workflows') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Workflows
+              </NuxtLink>
+
+              <NuxtLink 
+                to="/automation/ai-suggestions" 
+                :class="$route.path.startsWith('/automation/ai-suggestions') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                AI Insights
+              </NuxtLink>
+
+              <NuxtLink 
+                to="/automation/chatbot" 
+                :class="$route.path.startsWith('/automation/chatbot') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                AI Assistant
+              </NuxtLink>
+
+              <NuxtLink 
+                to="/automation/customer-portal" 
+                :class="$route.path.startsWith('/automation/customer-portal') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              >
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+                Customer Portal
+              </NuxtLink>
+            </div>
+          </div>
+
+          <!-- Analytics & Reports -->
+          <div class="pt-4">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
+            <div class="mt-2 space-y-1">
+              <NuxtLink 
+                to="/analytics/reports" 
+                :class="$route.path.startsWith('/analytics/reports') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
               >
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                Reports
+                Reports & Analytics
               </NuxtLink>
             </div>
           </div>
@@ -129,31 +263,44 @@
     </div>
 
     <!-- Main Content -->
-    <div class="pl-64">
+    <div class="lg:pl-64">
       <!-- Top Header -->
-      <header class="bg-white shadow-sm border-b border-neutral-200">
-        <div class="px-6 py-4">
+      <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="px-4 sm:px-6 py-4">
           <div class="flex items-center justify-between">
-            <div>
-              <h1 class="text-2xl font-semibold text-neutral-900">{{ pageTitle }}</h1>
+            <!-- Mobile menu button -->
+            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <div class="flex-1 ml-4 lg:ml-0">
+              <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{{ pageTitle }}</h1>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 sm:space-x-4">
               <!-- Notifications -->
-              <button class="p-2 text-neutral-400 hover:text-neutral-600 transition-colors">
+              <button class="relative p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zm-5-17h5l-5 5v-5z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
                 </svg>
+                <!-- Notification badge -->
+                <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
               </button>
               
               <!-- User Menu -->
-              <div class="flex items-center space-x-3">
+              <div class="flex items-center space-x-2 sm:space-x-3">
                 <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                  <span class="text-primary-600 font-medium text-sm">JD</span>
+                  <span class="text-primary-600 font-medium text-sm">{{ userInitials }}</span>
                 </div>
-                <div class="text-sm">
-                  <p class="font-medium text-neutral-900">John Doe</p>
-                  <p class="text-neutral-500">Administrator</p>
+                <div class="hidden sm:block text-sm">
+                  <p class="font-medium text-gray-900">{{ user?.name || 'User' }}</p>
+                  <p class="text-gray-500">{{ businessName }}</p>
                 </div>
+                <button @click="handleLogout" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -161,15 +308,54 @@
       </header>
 
       <!-- Page Content -->
-      <main class="p-6">
+      <main class="p-4 sm:p-6">
         <slot />
       </main>
+      
+      <!-- Footer -->
+      <footer class="mt-auto py-4 px-4 sm:px-6 text-center text-xs sm:text-sm text-gray-500 border-t border-gray-200 bg-white">
+        <p class="px-2">© 2024 Synthesq - A Product by TheMessieCompany. All rights reserved.</p>
+      </footer>
     </div>
   </div>
 </template>
 
 <script setup>
+import Badge from '~/components/ui/Badge.vue'
+
 const route = useRoute()
+const { user, logout, getUser } = useAuth()
+
+// Mobile sidebar state
+const sidebarOpen = ref(false)
+
+// Close sidebar when route changes (mobile)
+watch(() => route.path, () => {
+  sidebarOpen.value = false
+})
+
+// Prevent body scroll when sidebar is open on mobile
+watch(sidebarOpen, (isOpen) => {
+  if (process.client) {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+  }
+})
+
+// Clean up on unmount
+onUnmounted(() => {
+  if (process.client) {
+    document.body.style.overflow = ''
+  }
+})
+
+// Check authentication on layout mount
+onMounted(async () => {
+  await getUser()
+})
 
 const pageTitle = computed(() => {
   const titles = {
@@ -202,6 +388,25 @@ const pageTitle = computed(() => {
     if (route.path.includes('/sales/orders/')) return 'Order Details'
   }
   
-  return titles[route.path] || 'BistroKeep CRM/ERP'
+  return titles[route.path] || 'Synthesq'
 })
+
+const userInitials = computed(() => {
+  if (user.value?.name) {
+    return user.value.name.split(' ').map(n => n[0]).join('').toUpperCase()
+  }
+  return 'U'
+})
+
+const businessName = computed(() => {
+  if (process.client) {
+    const stored = localStorage.getItem('business_id')
+    return stored || 'Unknown Business'
+  }
+  return ''
+})
+
+const handleLogout = async () => {
+  await logout()
+}
 </script>

@@ -12,11 +12,11 @@
   }
 
   body {
-    @apply bg-neutral-50 text-neutral-900 antialiased;
+    @apply bg-gray-50 text-gray-900 antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold text-neutral-900;
+    @apply font-semibold text-gray-900;
   }
 
   h1 { @apply text-2xl; }
@@ -37,7 +37,7 @@
   }
 
   .btn-secondary {
-    @apply btn bg-neutral-200 text-neutral-700 hover:bg-neutral-300 focus:ring-neutral-500;
+    @apply btn bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500;
   }
 
   .btn-success {
@@ -49,11 +49,11 @@
   }
 
   .btn-danger {
-    @apply btn bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-500;
+    @apply btn bg-error-600 text-white hover:bg-error-700 focus:ring-error-500;
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-neutral-200 p-6;
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
   }
 
   .card-gradient {
@@ -61,7 +61,7 @@
   }
 
   .card-premium {
-    @apply bg-gradient-to-br from-primary-50 via-white to-secondary-50 border border-primary-200 shadow-lg p-6 rounded-xl;
+    @apply bg-gradient-to-br from-primary-50 via-white to-accent-50 border border-primary-200 shadow-lg p-6 rounded-xl;
   }
 
   .btn-gradient {
@@ -69,7 +69,7 @@
   }
 
   .input {
-    @apply block w-full px-3 py-2 border border-neutral-300 rounded-lg text-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
   }
 
   .sidebar-link {
@@ -81,7 +81,7 @@
   }
 
   .sidebar-link-inactive {
-    @apply sidebar-link text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900;
+    @apply sidebar-link text-gray-600 hover:bg-gray-100 hover:text-gray-900;
   }
 
   .status-active {
@@ -89,7 +89,7 @@
   }
 
   .status-inactive {
-    @apply bg-neutral-100 text-neutral-800;
+    @apply bg-gray-100 text-gray-800;
   }
 
   .status-prospect {
@@ -97,7 +97,7 @@
   }
 
   .stage-prospect {
-    @apply bg-neutral-100 text-neutral-800;
+    @apply bg-gray-100 text-gray-800;
   }
 
   .stage-qualified {
@@ -109,7 +109,7 @@
   }
 
   .stage-negotiation {
-    @apply bg-secondary-100 text-secondary-800;
+    @apply bg-accent-100 text-accent-800;
   }
 
   .stage-closed-won {
@@ -117,6 +117,6 @@
   }
 
   .stage-closed-lost {
-    @apply bg-danger-100 text-danger-800;
+    @apply bg-error-100 text-error-800;
   }
 }
