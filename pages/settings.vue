@@ -391,6 +391,11 @@ United States</textarea>
 </template>
 
 <script setup>
+// Apply auth middleware to protect this page
+definePageMeta({
+  middleware: 'auth'
+})
+
 const activeTab = ref('general')
 
 const settingsTabs = [

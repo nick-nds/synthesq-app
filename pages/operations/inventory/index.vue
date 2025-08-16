@@ -208,6 +208,10 @@
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: 'auth'
+})
+
 const { products } = useMockData()
 
 const searchQuery = ref('')

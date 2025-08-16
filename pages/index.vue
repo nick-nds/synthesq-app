@@ -317,6 +317,11 @@ import Badge from '~/components/ui/Badge.vue'
 import StatusIndicator from '~/components/ui/StatusIndicator.vue'
 import PhaseIndicator from '~/components/ui/PhaseIndicator.vue'
 
+// Apply auth middleware to protect this page
+definePageMeta({
+  middleware: 'auth'
+})
+
 const { dashboardMetrics } = useMockData()
 const metrics = dashboardMetrics
 const router = useRouter()

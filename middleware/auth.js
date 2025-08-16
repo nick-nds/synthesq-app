@@ -1,19 +1,23 @@
-export default defineNuxtRouteMiddleware((to) => {
-  const { isAuthenticated } = useAuth()
+export default defineNuxtRouteMiddleware(async (to) => {
+  const authStore = useAuthStore()
+  
+  // If auth store is currently loading, wait for it to complete
+  if (authStore.isLoading) {
+    // Wait for loading to complete or timeout
+    let attempts = 0
+    while (authStore.isLoading && attempts < 50) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      attempts++
+    }
+  }
   
   // If trying to access login page while authenticated, redirect to dashboard
-  if (to.path === '/login' && isAuthenticated.value) {
+  if (to.path === '/login' && authStore.isAuthenticated) {
     return navigateTo('/')
   }
   
   // If trying to access protected route while not authenticated, redirect to login
-  if (to.path !== '/login' && !isAuthenticated.value) {
-    // Check if business_id exists in localStorage (basic auth check)
-    if (process.client) {
-      const businessId = localStorage.getItem('business_id')
-      if (!businessId) {
-        return navigateTo('/login')
-      }
-    }
+  if (to.path !== '/login' && !authStore.isAuthenticated) {
+    return navigateTo('/login')
   }
 })
