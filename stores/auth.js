@@ -316,6 +316,6 @@ export const useAuthStore = defineStore('auth', () => {
 })
 
 // Hot Module Replacement support for devtools
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot))
-}
+// if (import.meta.hot) {
+//   import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot))
+// }

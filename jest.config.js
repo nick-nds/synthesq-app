@@ -3,27 +3,31 @@ export default {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^~/(.*)$': '<rootDir>/$1',
-    '^vue$': 'vue/dist/vue.common.js',
+    '^vue$': '<rootDir>/tests/mocks/vue.js',
+    '^#app': '<rootDir>/tests/mocks/nuxt.js',
+    '^#build': '<rootDir>/tests/mocks/nuxt.js',
+    '^pinia$': '<rootDir>/tests/mocks/pinia.js',
   },
-  moduleFileExtensions: ['js', 'vue', 'json'],
+  moduleFileExtensions: ['js', 'json'],
   transform: {
     '^.+\\.js$': 'babel-jest',
   },
   collectCoverage: false,
   collectCoverageFrom: [
-    '<rootDir>/components/**/*.vue',
-    '<rootDir>/pages/**/*.vue',
     '<rootDir>/utils/**/*.js',
     '<rootDir>/composables/**/*.js',
-    '<rootDir>/plugins/**/*.js',
+    '<rootDir>/stores/**/*.js',
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
     '/.nuxt/',
     '/dist/',
+    '/tests/unit/pages/',
+    '/tests/integration/',
+    '/tests/e2e/',
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(@nuxt|nuxt|#app|#build|.pnpm))',
+    'node_modules/(?!(pinia|@pinia|@vue|@nuxt|nuxt|#app|#build|.pnpm))',
   ],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
 }

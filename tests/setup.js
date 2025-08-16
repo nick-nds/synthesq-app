@@ -73,4 +73,78 @@ global.resetDocumentCookies = () => {
   })
 }
 
-process.client = true
+// Global process object
+global.process = {
+  client: true,
+  server: false,
+  env: {
+    NODE_ENV: 'test'
+  }
+}
+
+// Global window object for devtools
+global.window = {
+  __VUE_DEVTOOLS_GLOBAL_HOOK__: {
+    emit: jest.fn()
+  },
+  location: {
+    pathname: '/',
+    search: '',
+    hash: ''
+  }
+}
+
+// Make process available on window for compatibility
+window.process = global.process
+
+// Define Nuxt composables globally
+global.defineNuxtRouteMiddleware = (middleware) => middleware
+global.definePageMeta = () => {}
+global.defineNuxtPlugin = (plugin) => plugin
+global.navigateTo = jest.fn()
+global.useRouter = () => ({
+  push: jest.fn(),
+  replace: jest.fn(),
+  go: jest.fn(),
+  back: jest.fn(),
+  forward: jest.fn(),
+})
+global.useRoute = () => ({
+  path: '/',
+  params: {},
+  query: {},
+  hash: '',
+  name: 'index',
+})
+global.useRuntimeConfig = () => ({
+  public: {
+    apiBase: 'https://api.crm.test:40443',
+    apiPrefix: '/api/v1'
+  }
+})
+global.useNuxtApp = () => ({
+  $pinia: {
+    state: { value: {} },
+    _s: new Map()
+  }
+})
+global.nextTick = () => Promise.resolve()
+global.$fetch = jest.fn()
+
+// Mock $fetch.raw for auth store
+global.$fetch.raw = jest.fn(() => Promise.resolve({
+  _data: {},
+  headers: {
+    get: jest.fn()
+  }
+}))
+
+// Vue composition API mocks
+global.ref = (value) => ({ value })
+global.reactive = (value) => value
+global.computed = (fn) => ({ value: fn() })
+global.watch = jest.fn()
+global.onMounted = jest.fn()
+global.onUnmounted = jest.fn()
+global.readonly = (value) => value
+global.toRaw = (value) => value
