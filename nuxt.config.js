@@ -1,8 +1,29 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
-  devtools: { enabled: true },
+  devtools: { 
+    enabled: true,
+    vscode: {},
+    timeline: {
+      enabled: true
+    }
+  },
+  
+  vite: {
+    vue: {
+      customElement: true
+    },
+    define: {
+      __VUE_PROD_DEVTOOLS__: true
+    }
+  },
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
+  
+  pinia: {
+    storesDirs: ['./stores/**'],
+    autoImports: ['defineStore', 'acceptHMRUpdate'],
+    disableVuex: false
+  },
   css: ['~/assets/css/main.css'],
   
   // SPA mode configuration

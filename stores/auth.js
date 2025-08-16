@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 
 export const useAuthStore = defineStore('auth', () => {
   // State
@@ -36,6 +36,20 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const getCsrfToken = () => {
+    if (!process.client) return null
+    
+    // Extract XSRF-TOKEN from cookies
+    const cookies = document.cookie.split(';')
+    for (let cookie of cookies) {
+      const [name, value] = cookie.trim().split('=')
+      if (name === 'XSRF-TOKEN') {
+        return decodeURIComponent(value)
+      }
+    }
+    return null
+  }
+
   const getCsrfCookie = async () => {
     try {
       const config = useRuntimeConfig()
@@ -50,18 +64,86 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const getCurrentUser = async () => {
+  const makeAuthenticatedRequest = async (url, options = {}) => {
+    const config = useRuntimeConfig()
+    const csrfToken = getCsrfToken()
+    
+    console.log(`Making request to ${url} with CSRF token:`, csrfToken ? csrfToken.substring(0, 50) + '...' : 'No token')
+    
+    const headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      ...(businessId.value ? { 'X-Business-ID': businessId.value } : {}),
+      ...(csrfToken ? { 'X-XSRF-TOKEN': csrfToken } : {}),
+      ...(options.headers || {})
+    }
+
     try {
-      const config = useRuntimeConfig()
-      const response = await $fetch('/user', {
+      const response = await $fetch.raw(url, {
         baseURL: config.public.apiBase + config.public.apiPrefix,
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          ...(businessId.value ? { 'X-Business-ID': businessId.value } : {})
-        }
+        ...options,
+        headers
       })
+
+      // Check if server returned a new CSRF token in Set-Cookie headers
+      if (process.client && response.headers) {
+        const setCookieHeaders = response.headers.get('set-cookie')
+        if (setCookieHeaders) {
+          // Extract XSRF-TOKEN from Set-Cookie header
+          const xsrfTokenMatch = setCookieHeaders.match(/XSRF-TOKEN=([^;]+)/)
+          if (xsrfTokenMatch) {
+            const newXsrfToken = decodeURIComponent(xsrfTokenMatch[1])
+            const currentToken = getCsrfToken()
+            if (newXsrfToken !== currentToken) {
+              console.log('New CSRF token received in Set-Cookie, will be automatically used')
+            }
+          }
+        }
+        
+        // Also check for token in response headers (fallback)
+        const newXsrfToken = response.headers.get('X-XSRF-TOKEN') || response.headers.get('x-xsrf-token')
+        if (newXsrfToken && newXsrfToken !== csrfToken) {
+          document.cookie = `XSRF-TOKEN=${encodeURIComponent(newXsrfToken)}; path=/; SameSite=Lax`
+          console.log('Updated CSRF token from response headers')
+        }
+      }
+
+      return response._data
+    } catch (error) {
+      // If CSRF token mismatch (419), try to refresh the token and retry once
+      if (error.status === 419) {
+        console.log('CSRF token mismatch, refreshing token and retrying...')
+        const csrfSuccess = await getCsrfCookie()
+        if (csrfSuccess) {
+          const newCsrfToken = getCsrfToken()
+          const retryHeaders = {
+            ...headers,
+            ...(newCsrfToken ? { 'X-XSRF-TOKEN': newCsrfToken } : {})
+          }
+          
+          const retryResponse = await $fetch.raw(url, {
+            baseURL: config.public.apiBase + config.public.apiPrefix,
+            credentials: 'include',
+            ...options,
+            headers: retryHeaders
+          })
+          
+          return retryResponse._data
+        }
+      }
+      throw error
+    }
+  }
+
+  const getCurrentUser = async (forceRefreshToken = false) => {
+    try {
+      // If we need to force refresh (like after login), wait for cookies to update
+      if (forceRefreshToken && process.client) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+      
+      const response = await makeAuthenticatedRequest('/user')
       return response
     } catch (error) {
       if (error.status === 401) {
@@ -126,6 +208,68 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const login = async (credentials) => {
+    if (isLoading.value) return { success: false, error: 'Login already in progress' }
+    
+    try {
+      isLoading.value = true
+      
+      // Set business ID first so it's available for API requests
+      setBusinessId(credentials.business_id)
+      
+      // Call login endpoint with CSRF token (cookie should already be set from page load)
+      const loginResponse = await makeAuthenticatedRequest('/login', {
+        method: 'POST',
+        headers: {
+          'X-Business-ID': credentials.business_id
+        },
+        body: {
+          email: credentials.email,
+          password: credentials.password
+        }
+      })
+      
+      // Get authenticated user data with fresh token
+      const userData = await getCurrentUser(true)
+      
+      if (userData) {
+        setUser(userData)
+        return { success: true, user: userData }
+      } else {
+        clearAuth()
+        return { success: false, error: 'Failed to get user data after login' }
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      clearAuth()
+      
+      if (error.status === 401) {
+        return { success: false, error: 'Invalid credentials. Please check your email and password.' }
+      } else if (error.status === 422) {
+        return { success: false, error: error.data?.message || 'Validation error. Please check your input.' }
+      } else if (error.status === 403) {
+        return { success: false, error: 'Access denied. Please check your business ID.' }
+      } else {
+        return { success: false, error: 'Login failed. Please try again.' }
+      }
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  const logout = async () => {
+    try {
+      await makeAuthenticatedRequest('/logout', {
+        method: 'POST'
+      })
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      clearAuth()
+      await navigateTo('/login')
+    }
+  }
+
   const initializeFromStorage = () => {
     if (process.client) {
       // Restore user from localStorage
@@ -162,7 +306,16 @@ export const useAuthStore = defineStore('auth', () => {
     initializeFromStorage,
     checkAuthStatus,
     getCsrfCookie,
+    getCsrfToken,
     getCurrentUser,
-    handleAuthRedirect
+    handleAuthRedirect,
+    login,
+    logout,
+    makeAuthenticatedRequest
   }
 })
+
+// Hot Module Replacement support for devtools
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot))
+}

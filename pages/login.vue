@@ -39,28 +39,10 @@
                 autocomplete="organization"
                 required
                 class="input"
-                :class="{ 'border-error-300 focus:ring-error-500': errors.businessId }"
                 placeholder="Enter your business ID"
-                @blur="validateBusinessId"
               >
-              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <svg v-if="businessValidating" class="animate-spin h-5 w-5 text-primary-500" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <svg v-else-if="businessFound" class="h-5 w-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-                <svg v-else-if="errors.businessId" class="h-5 w-5 text-error-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-              </div>
             </div>
-            <p v-if="errors.businessId" class="mt-2 text-sm text-error-600">{{ errors.businessId }}</p>
-            <p v-else-if="businessFound" class="mt-2 text-sm text-success-600">
-              Business found: {{ businessFound.name }}
-            </p>
-            <p v-else class="mt-2 text-xs text-gray-500">
+            <p class="mt-2 text-xs text-gray-500">
               Your unique business identifier (e.g., bistro-downtown, acme-corp)
             </p>
           </div>
@@ -191,19 +173,9 @@
                   @click="fillDemoCredentials('admin')"
                   class="text-primary-600 hover:text-primary-500 font-medium block w-full text-left"
                 >
-                  <span class="block font-semibold">Admin Access</span>
-                  <span class="block text-gray-600">bistro-downtown</span>
-                  <span class="block text-gray-600">admin@synthesq.com / admin123</span>
-                </button>
-              </div>
-              <div class="bg-gray-50 rounded-lg p-3">
-                <button
-                  @click="fillDemoCredentials('manager')"
-                  class="text-primary-600 hover:text-primary-500 font-medium block w-full text-left"
-                >
-                  <span class="block font-semibold">Manager Access</span>
-                  <span class="block text-gray-600">acme-corp</span>
-                  <span class="block text-gray-600">manager@synthesq.com / manager123</span>
+                  <span class="block font-semibold">Demo Access</span>
+                  <span class="block text-gray-600">tenant1</span>
+                  <span class="block text-gray-600">test@example.com / password</span>
                 </button>
               </div>
             </div>
@@ -237,69 +209,32 @@ const form = reactive({
   remember: false
 })
 
+// Pre-populate business ID from localStorage if available
+onMounted(() => {
+  if (process.client) {
+    const storedBusinessId = localStorage.getItem('business_id')
+    if (storedBusinessId) {
+      form.businessId = storedBusinessId
+    }
+  }
+})
+
 const showPassword = ref(false)
 const loading = ref(false)
 const loginError = ref('')
-const businessValidating = ref(false)
-const businessFound = ref(null)
 const errors = reactive({
-  businessId: '',
   email: '',
   password: ''
 })
 
-// Mock businesses for demo
-const mockBusinesses = [
-  { id: 'bistro-downtown', name: 'Bistro Downtown', plan: 'premium' },
-  { id: 'acme-corp', name: 'Acme Corporation', plan: 'enterprise' },
-  { id: 'tech-startup', name: 'Tech Startup Inc', plan: 'standard' },
-  { id: 'demo-business', name: 'Demo Business', plan: 'trial' },
-  { id: 'restaurant-chain', name: 'Restaurant Chain Co', plan: 'enterprise' }
-]
-
-// Business validation
-const validateBusinessId = async () => {
-  if (!form.businessId) {
-    businessFound.value = null
-    errors.businessId = ''
-    return
-  }
-  
-  businessValidating.value = true
-  errors.businessId = ''
-  
-  try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    const business = mockBusinesses.find(b => b.id.toLowerCase() === form.businessId.toLowerCase())
-    
-    if (business) {
-      businessFound.value = business
-    } else {
-      businessFound.value = null
-      errors.businessId = 'Business ID not found. Please check and try again.'
-    }
-  } catch (error) {
-    errors.businessId = 'Unable to verify business ID. Please try again.'
-  } finally {
-    businessValidating.value = false
-  }
-}
 
 // Validation
 const validateForm = () => {
-  errors.businessId = ''
   errors.email = ''
   errors.password = ''
   
   if (!form.businessId) {
-    errors.businessId = 'Business ID is required'
-    return false
-  }
-  
-  if (!businessFound.value) {
-    errors.businessId = 'Please enter a valid business ID'
+    loginError.value = 'Business ID is required'
     return false
   }
   
@@ -326,8 +261,8 @@ const validateForm = () => {
   return true
 }
 
-// Auth composable
-const { login } = useAuth()
+// Auth store
+const authStore = useAuthStore()
 
 // Handle login
 const handleLogin = async () => {
@@ -340,7 +275,7 @@ const handleLogin = async () => {
   loading.value = true
   
   try {
-    const result = await login({
+    const result = await authStore.login({
       business_id: form.businessId,
       email: form.email,
       password: form.password
@@ -352,6 +287,7 @@ const handleLogin = async () => {
       loginError.value = result.error || 'Invalid credentials. Please check your business ID, email, and password.'
     }
   } catch (error) {
+    console.error('Login error:', error)
     loginError.value = 'An error occurred. Please try again later.'
   } finally {
     loading.value = false
@@ -361,27 +297,20 @@ const handleLogin = async () => {
 // Fill demo credentials
 const fillDemoCredentials = async (type) => {
   if (type === 'admin') {
-    form.businessId = 'bistro-downtown'
-    form.email = 'admin@synthesq.com'
-    form.password = 'admin123'
-    // Trigger business validation
-    await validateBusinessId()
-  } else if (type === 'manager') {
-    form.businessId = 'acme-corp'
-    form.email = 'manager@synthesq.com'
-    form.password = 'manager123'
-    // Trigger business validation
-    await validateBusinessId()
+    form.businessId = 'tenant1'
+    form.email = 'test@example.com'
+    form.password = 'password'
   }
-  errors.businessId = ''
   errors.email = ''
   errors.password = ''
 }
 
-// Clear errors on input
-watch(() => form.businessId, () => {
-  if (errors.businessId) errors.businessId = ''
-  businessFound.value = null
+// Clear errors on input and update localStorage for business ID
+watch(() => form.businessId, (newBusinessId) => {
+  // Update localStorage when business ID changes
+  if (process.client && newBusinessId) {
+    localStorage.setItem('business_id', newBusinessId)
+  }
 })
 
 watch(() => form.email, () => {

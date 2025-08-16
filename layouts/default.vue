@@ -293,7 +293,7 @@
                   <span class="text-primary-600 font-medium text-sm">{{ userInitials }}</span>
                 </div>
                 <div class="hidden sm:block text-sm">
-                  <p class="font-medium text-gray-900">{{ user?.name || 'User' }}</p>
+                  <p class="font-medium text-gray-900">{{ authStore.user?.name || 'User' }}</p>
                   <p class="text-gray-500">{{ businessName }}</p>
                 </div>
                 <button @click="handleLogout" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
@@ -324,7 +324,7 @@
 import Badge from '~/components/ui/Badge.vue'
 
 const route = useRoute()
-const { user, logout, getUser } = useAuth()
+const authStore = useAuthStore()
 
 // Mobile sidebar state
 const sidebarOpen = ref(false)
@@ -350,11 +350,6 @@ onUnmounted(() => {
   if (process.client) {
     document.body.style.overflow = ''
   }
-})
-
-// Check authentication on layout mount
-onMounted(async () => {
-  await getUser()
 })
 
 const pageTitle = computed(() => {
@@ -392,21 +387,17 @@ const pageTitle = computed(() => {
 })
 
 const userInitials = computed(() => {
-  if (user.value?.name) {
-    return user.value.name.split(' ').map(n => n[0]).join('').toUpperCase()
+  if (authStore.user?.name) {
+    return authStore.user.name.split(' ').map(n => n[0]).join('').toUpperCase()
   }
   return 'U'
 })
 
 const businessName = computed(() => {
-  if (process.client) {
-    const stored = localStorage.getItem('business_id')
-    return stored || 'Unknown Business'
-  }
-  return ''
+  return authStore.businessId || 'Unknown Business'
 })
 
 const handleLogout = async () => {
-  await logout()
+  await authStore.logout()
 }
 </script>
