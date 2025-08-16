@@ -61,7 +61,7 @@ class ApiClient {
   }
 
   async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`
+    let url = `${this.baseURL}${endpoint}`
     
     let requestOptions = {
       ...options,
@@ -78,14 +78,14 @@ class ApiClient {
     }
 
     for (const interceptor of this.interceptors.request) {
-      requestOptions = await interceptor({ url, options: requestOptions }) || requestOptions
+      requestOptions = await interceptor(requestOptions) || requestOptions
     }
 
-    if (requestOptions.body && typeof requestOptions.body === 'object' && !(requestOptions.body instanceof FormData)) {
+    if (requestOptions.body !== undefined && typeof requestOptions.body === 'object' && !(requestOptions.body instanceof FormData)) {
       requestOptions.body = JSON.stringify(requestOptions.body)
     }
 
-    if (options.params) {
+    if (options.params && Object.keys(options.params).length > 0) {
       const params = new URLSearchParams(options.params)
       const separator = url.includes('?') ? '&' : '?'
       url = `${url}${separator}${params.toString()}`
@@ -110,6 +110,8 @@ class ApiClient {
           } catch (e) {
             error.data = null
           }
+        } else {
+          error.data = null
         }
         
         throw error
