@@ -275,7 +275,7 @@
               </svg>
             </button>
             <div class="flex-1 ml-4 lg:ml-0">
-              <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{{ pageTitle }}</h1>
+              <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{{ sectionName }}</h1>
             </div>
             <div class="flex items-center space-x-2 sm:space-x-4">
               <!-- Notifications -->
@@ -288,19 +288,158 @@
               </button>
               
               <!-- User Menu -->
-              <div class="flex items-center space-x-2 sm:space-x-3">
-                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                  <span class="text-primary-600 font-medium text-sm">{{ userInitials }}</span>
-                </div>
-                <div class="hidden sm:block text-sm">
-                  <p class="font-medium text-gray-900">{{ authStore.user?.name || 'User' }}</p>
-                  <p class="text-gray-500">{{ businessName }}</p>
-                </div>
-                <button @click="handleLogout" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              <div class="relative" ref="userMenuRef">
+                <button 
+                  @click="userMenuOpen = !userMenuOpen"
+                  class="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                >
+                  <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                    <span class="text-primary-600 font-medium text-sm">{{ userInitials }}</span>
+                  </div>
+                  <div class="hidden sm:block text-sm text-left">
+                    <p class="font-medium text-gray-900">{{ authStore.user?.name || 'User' }}</p>
+                    <p class="text-gray-500">{{ businessName }}</p>
+                  </div>
+                  <!-- Chevron -->
+                  <svg 
+                    class="w-4 h-4 text-gray-400 transition-transform duration-200" 
+                    :class="userMenuOpen ? 'rotate-180' : ''"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
+
+                <!-- Dropdown Menu -->
+                <transition
+                  enter-active-class="transition ease-out duration-100"
+                  enter-from-class="transform opacity-0 scale-95"
+                  enter-to-class="transform opacity-100 scale-100"
+                  leave-active-class="transition ease-in duration-75"
+                  leave-from-class="transform opacity-100 scale-100"
+                  leave-to-class="transform opacity-0 scale-95"
+                >
+                  <div 
+                    v-show="userMenuOpen"
+                    class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                  >
+                    <!-- User Info Header -->
+                    <div class="px-4 py-3 border-b border-gray-100">
+                      <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                          <span class="text-primary-600 font-medium">{{ userInitials }}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium text-gray-900 truncate">{{ authStore.user?.name || 'User' }}</p>
+                          <p class="text-sm text-gray-500 truncate">{{ authStore.user?.email || businessName }}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Menu Items -->
+                    <div class="py-1">
+                      <!-- Profile -->
+                      <NuxtLink 
+                        to="/profile" 
+                        @click="userMenuOpen = false"
+                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Your Profile
+                      </NuxtLink>
+
+                      <!-- Account Settings -->
+                      <NuxtLink 
+                        to="/settings" 
+                        @click="userMenuOpen = false"
+                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Account Settings
+                      </NuxtLink>
+
+                      <!-- Billing -->
+                      <button 
+                        @click="userMenuOpen = false"
+                        class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                        Billing & Plans
+                      </button>
+
+                      <!-- Team Management -->
+                      <button 
+                        @click="userMenuOpen = false"
+                        class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Team Management
+                      </button>
+
+                      <!-- Help & Support -->
+                      <button 
+                        @click="userMenuOpen = false"
+                        class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Help & Support
+                      </button>
+
+                      <!-- Divider -->
+                      <div class="border-t border-gray-100 my-1"></div>
+
+                      <!-- Keyboard Shortcuts -->
+                      <button 
+                        @click="userMenuOpen = false"
+                        class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H7a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                        </svg>
+                        Keyboard Shortcuts
+                        <span class="ml-auto text-xs text-gray-400">⌘K</span>
+                      </button>
+
+                      <!-- Privacy Settings -->
+                      <button 
+                        @click="userMenuOpen = false"
+                        class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Privacy Settings
+                      </button>
+
+                      <!-- Divider -->
+                      <div class="border-t border-gray-100 my-1"></div>
+
+                      <!-- Sign Out -->
+                      <button 
+                        @click="handleLogout"
+                        class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                </transition>
               </div>
             </div>
           </div>
@@ -329,9 +468,30 @@ const authStore = useAuthStore()
 // Mobile sidebar state
 const sidebarOpen = ref(false)
 
+// User menu state
+const userMenuOpen = ref(false)
+const userMenuRef = ref(null)
+
 // Close sidebar when route changes (mobile)
 watch(() => route.path, () => {
   sidebarOpen.value = false
+  userMenuOpen.value = false
+})
+
+// Click outside to close user menu
+const handleClickOutside = (event) => {
+  if (userMenuRef.value && !userMenuRef.value.contains(event.target)) {
+    userMenuOpen.value = false
+  }
+}
+
+// Add/remove click outside listener
+watch(userMenuOpen, (isOpen) => {
+  if (isOpen) {
+    document.addEventListener('click', handleClickOutside)
+  } else {
+    document.removeEventListener('click', handleClickOutside)
+  }
 })
 
 // Prevent body scroll when sidebar is open on mobile
@@ -350,40 +510,41 @@ onUnmounted(() => {
   if (process.client) {
     document.body.style.overflow = ''
   }
+  document.removeEventListener('click', handleClickOutside)
 })
 
-const pageTitle = computed(() => {
-  const titles = {
-    '/': 'Dashboard',
-    '/customers': 'Customers',
-    '/customers/add': 'Add New Customer',
-    '/leads': 'Leads & Opportunities',
-    '/leads/add': 'Add New Lead',
-    '/sales': 'Orders & Sales',
-    '/inventory': 'Inventory Management',
-    '/inventory/add': 'Add New Product',
-    '/finance': 'Finance & Accounting',
-    '/reports': 'Reports & Analytics',
-    '/settings': 'Settings'
-  }
+const sectionName = computed(() => {
+  const path = route.path
   
-  // Handle dynamic routes for editing
-  if (route.path.includes('/edit')) {
-    if (route.path.includes('/customers/')) return 'Edit Customer'
-    if (route.path.includes('/leads/')) return 'Edit Lead'
-    if (route.path.includes('/inventory/')) return 'Edit Product'
-    if (route.path.includes('/sales/orders/')) return 'Edit Order'
-  }
+  // Root dashboard
+  if (path === '/') return 'DASHBOARD'
   
-  // Handle dynamic routes for viewing
-  if (route.path.match(/\/\d+$/) && !route.path.includes('/edit') && !route.path.includes('/add')) {
-    if (route.path.includes('/customers/')) return 'Customer Details'
-    if (route.path.includes('/leads/')) return 'Lead Details'
-    if (route.path.includes('/inventory/')) return 'Product Details'
-    if (route.path.includes('/sales/orders/')) return 'Order Details'
-  }
+  // Settings
+  if (path === '/settings') return 'SETTINGS'
   
-  return titles[route.path] || 'Synthesq'
+  // CRM Section
+  if (path.startsWith('/crm/')) return 'CRM'
+  
+  // Sales Section
+  if (path.startsWith('/sales/')) return 'SALES'
+  
+  // Operations Section  
+  if (path.startsWith('/operations/')) return 'OPERATIONS'
+  
+  // Finance Section
+  if (path.startsWith('/finance/')) return 'FINANCE'
+  
+  // People Section
+  if (path.startsWith('/people/')) return 'PEOPLE'
+  
+  // Automation Section
+  if (path.startsWith('/automation/')) return 'AUTOMATION'
+  
+  // Analytics Section
+  if (path.startsWith('/analytics/')) return 'ANALYTICS'
+  
+  // Default fallback
+  return 'SYNTHESQ'
 })
 
 const userInitials = computed(() => {

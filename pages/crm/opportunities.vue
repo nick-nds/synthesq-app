@@ -1,5 +1,13 @@
 <template>
   <div class="space-y-6">
+    <!-- Header with actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">Opportunities</h2>
+        <p class="text-sm text-gray-600 mt-1">Manage sales opportunities and track deals through to closure</p>
+      </div>
+    </div>
+
     <!-- Header with KPIs -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
