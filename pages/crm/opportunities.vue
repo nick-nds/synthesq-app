@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header with actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Opportunities</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="getHelpText('opportunity')">
+          <h2 class="text-2xl font-bold text-gray-900">Opportunities</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Manage sales opportunities and track deals through to closure</p>
       </div>
     </div>
@@ -11,25 +13,30 @@
     <!-- Header with KPIs -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Active Opportunities</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Active opportunities that are currently being pursued and have not been closed (won or lost).'">
+              <p class="text-sm text-gray-600 mb-2">Active Opportunities</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ kpis.activeOpportunities }}</p>
+            <p class="text-xs text-success-600 mt-2">{{ Math.round((kpis.activeOpportunities / kpis.totalOpportunities) * 100) }}% of total</p>
           </div>
-          <div class="p-3 bg-primary-100 rounded-lg">
+          <div class="p-3 bg-primary-100 rounded-lg flex-shrink-0">
             <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
         </div>
-        <p class="text-xs text-success-600 mt-2">{{ Math.round((kpis.activeOpportunities / kpis.totalOpportunities) * 100) }}% of total</p>
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Pipeline Value</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('pipeline')">
+              <p class="text-sm text-gray-600 mb-2">Pipeline Value</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(kpis.totalPipelineValue) }}</p>
+            <p class="text-xs text-gray-600 mt-2">Weighted by probability</p>
           </div>
           <div class="p-3 bg-accent-100 rounded-lg">
             <svg class="w-6 h-6 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,14 +44,16 @@
             </svg>
           </div>
         </div>
-        <p class="text-xs text-gray-600 mt-2">Weighted by probability</p>
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Win Rate</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('win_rate')">
+              <p class="text-sm text-gray-600 mb-2">Win Rate</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ kpis.winRate }}%</p>
+            <p class="text-xs text-gray-600 mt-2">{{ kpis.wonOpportunities }} won, {{ kpis.lostOpportunities }} lost</p>
           </div>
           <div class="p-3 bg-success-100 rounded-lg">
             <svg class="w-6 h-6 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,14 +61,16 @@
             </svg>
           </div>
         </div>
-        <p class="text-xs text-gray-600 mt-2">{{ kpis.wonOpportunities }} won, {{ kpis.lostOpportunities }} lost</p>
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Avg Deal Size</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('deal_size')">
+              <p class="text-sm text-gray-600 mb-2">Avg Deal Size</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(kpis.avgDealSize) }}</p>
+            <p class="text-xs text-gray-600 mt-2">Across all opportunities</p>
           </div>
           <div class="p-3 bg-warning-100 rounded-lg">
             <svg class="w-6 h-6 text-warning-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,7 +78,6 @@
             </svg>
           </div>
         </div>
-        <p class="text-xs text-gray-600 mt-2">Across all opportunities</p>
       </div>
     </div>
 
@@ -215,7 +225,17 @@
       <h3 class="text-lg font-semibold text-gray-900 mb-6">Opportunity Kanban Board</h3>
       
       <div class="grid grid-cols-1 lg:grid-cols-7 gap-4 min-h-96">
-        <div v-for="stageData in opportunitiesByStage" :key="stageData.stage" class="bg-gray-50 rounded-lg p-4">
+        <div 
+          v-for="stageData in opportunitiesByStage" 
+          :key="stageData.stage" 
+          class="bg-gray-50 rounded-lg p-4 min-h-96"
+          :data-stage="stageData.stage"
+          @drop="onDrop($event, stageData.stage)"
+          @dragover="onDragOver"
+          @dragenter="onDragEnter($event, stageData.stage)"
+          @dragleave="onDragLeave"
+          :class="{ 'bg-blue-100 border-2 border-blue-300 border-dashed': draggedOverStage === stageData.stage }"
+        >
           <div class="flex items-center justify-between mb-4">
             <h4 class="font-medium text-gray-900 capitalize text-sm">{{ formatStageName(stageData.stage) }}</h4>
             <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">{{ stageData.count }}</span>
@@ -226,9 +246,13 @@
               v-for="opportunity in stageData.opportunities" 
               :key="opportunity.id"
               :class="[
-                'bg-white rounded-lg p-3 border-l-4 cursor-pointer hover:shadow-sm transition-shadow',
-                getStageColor(stageData.stage)
+                'bg-white rounded-lg p-3 border-l-4 cursor-pointer hover:shadow-sm transition-all duration-200',
+                getStageColor(stageData.stage),
+                { 'opacity-50 rotate-1 scale-105': draggedOpportunity?.id === opportunity.id }
               ]"
+              draggable="true"
+              @dragstart="onDragStart($event, opportunity)"
+              @dragend="onDragEnd"
               @click="selectOpportunity(opportunity)"
             >
               <div class="mb-2">
@@ -549,7 +573,10 @@
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
 const { mockOpportunities, getOpportunityKPIs, getOpportunitiesByStage, getOpportunityForecast, formatCurrency, getStatusColor } = useMockCRM()
+const { getHelpText } = useHelpContent()
 
 definePageMeta({
   middleware: 'auth'
@@ -562,6 +589,10 @@ const searchQuery = ref('')
 const stageFilter = ref('')
 const ownerFilter = ref('')
 const priorityFilter = ref('')
+
+// Drag and drop state
+const draggedOpportunity = ref(null)
+const draggedOverStage = ref(null)
 
 // Computed properties
 const kpis = computed(() => getOpportunityKPIs())
@@ -683,6 +714,98 @@ const getTimeFromNow = (dateString) => {
   if (diffDays === 0) return 'Today'
   if (diffDays === 1) return 'Tomorrow'
   return `${diffDays} days`
+}
+
+// Drag and Drop Methods
+const onDragStart = (event, opportunity) => {
+  draggedOpportunity.value = opportunity
+  event.dataTransfer.effectAllowed = 'move'
+  event.dataTransfer.setData('text/plain', opportunity.id)
+  
+  // Add slight delay to prevent immediate visual feedback
+  setTimeout(() => {
+    if (draggedOpportunity.value?.id === opportunity.id) {
+      // Visual feedback is handled by CSS classes
+    }
+  }, 50)
+}
+
+const onDragEnd = () => {
+  draggedOpportunity.value = null
+  draggedOverStage.value = null
+}
+
+const onDragOver = (event) => {
+  event.preventDefault()
+  event.dataTransfer.dropEffect = 'move'
+}
+
+const onDragEnter = (event, stage) => {
+  event.preventDefault()
+  draggedOverStage.value = stage
+}
+
+const onDragLeave = (event) => {
+  // Only clear if we're leaving the drop zone entirely
+  const rect = event.currentTarget.getBoundingClientRect()
+  const x = event.clientX
+  const y = event.clientY
+  
+  if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+    draggedOverStage.value = null
+  }
+}
+
+const onDrop = (event, targetStage) => {
+  event.preventDefault()
+  
+  if (!draggedOpportunity.value) return
+  
+  const sourceStage = draggedOpportunity.value.stage
+  
+  // Don't do anything if dropped on the same stage
+  if (sourceStage === targetStage) {
+    onDragEnd()
+    return
+  }
+  
+  // Update the opportunity stage
+  const opportunityIndex = mockOpportunities.findIndex(
+    opp => opp.id === draggedOpportunity.value.id
+  )
+  
+  if (opportunityIndex !== -1) {
+    // Update the stage
+    mockOpportunities[opportunityIndex] = {
+      ...mockOpportunities[opportunityIndex],
+      stage: targetStage,
+      // Update probability based on stage
+      probability: getStageDefaultProbability(targetStage)
+    }
+    
+    // Show success notification
+    const { success } = useNotifications()
+    success(
+      'Opportunity Updated', 
+      `${draggedOpportunity.value.title} moved to ${formatStageName(targetStage)}`, 
+      { duration: 3000 }
+    )
+  }
+  
+  onDragEnd()
+}
+
+const getStageDefaultProbability = (stage) => {
+  const stageProbabilities = {
+    'prospecting': 10,
+    'qualification': 25,
+    'discovery': 40,
+    'proposal': 60,
+    'negotiation': 80,
+    'closed-won': 100,
+    'closed-lost': 0
+  }
+  return stageProbabilities[stage] || 20
 }
 
 // Watch for filter changes

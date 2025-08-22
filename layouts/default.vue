@@ -28,228 +28,492 @@
         </button>
       </div>
 
+      <!-- Quick Search -->
+      <div class="px-3 mt-6 mb-4">
+        <div class="relative">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search modules..."
+            class="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+          />
+          <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+
       <!-- Navigation - Scrollable -->
-      <nav class="flex-1 overflow-y-auto mt-6 px-3 pb-4">
-        <div class="space-y-1">
+      <nav class="flex-1 overflow-y-auto px-3 pb-4">
+        <div class="space-y-2">
           <!-- Dashboard -->
           <NuxtLink 
             to="/" 
             :class="$route.path === '/' ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+            v-if="!searchQuery || 'dashboard'.includes(searchQuery.toLowerCase())"
           >
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v3H8V5z" />
-            </svg>
-            Dashboard
+            <div class="w-5 h-5 mr-3 flex items-center justify-center">
+              <div class="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
+            </div>
+            <span>Dashboard</span>
+            <div class="ml-auto flex items-center space-x-1">
+              <div class="w-1.5 h-1.5 bg-success-400 rounded-full"></div>
+            </div>
           </NuxtLink>
 
           <!-- CRM Section -->
-          <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">CRM</p>
-            <div class="mt-2 space-y-1">
+          <div class="pt-2" v-if="!searchQuery || navigationSections.crm.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))">
+            <button 
+              @click="toggleSection('crm')"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <div class="w-4 h-4 mr-2 rounded bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                CRM
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="expandedSections.crm ? 'rotate-90' : ''"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <div 
+              v-show="expandedSections.crm"
+              class="mt-1 space-y-0.5 ml-4 pl-2 border-l border-gray-200"
+            >
               <NuxtLink 
                 to="/crm/leads" 
                 :class="$route.path.startsWith('/crm/leads') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'leads'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
-                Leads
+                <span>Leads</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">127</span>
+                </div>
               </NuxtLink>
 
               <NuxtLink 
                 to="/crm/opportunities" 
                 :class="$route.path.startsWith('/crm/opportunities') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'opportunities'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
-                Opportunities
+                <span>Opportunities</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">45</span>
+                </div>
               </NuxtLink>
               
               <NuxtLink 
                 to="/crm/customers" 
                 :class="$route.path.startsWith('/crm/customers') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'customers'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                 </svg>
-                Customers
+                <span>Customers</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">234</span>
+                </div>
               </NuxtLink>
             </div>
           </div>
 
           <!-- Sales Section -->
-          <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sales</p>
-            <div class="mt-2 space-y-1">
+          <div class="pt-2" v-if="!searchQuery || navigationSections.sales.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))">
+            <button 
+              @click="toggleSection('sales')"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <div class="w-4 h-4 mr-2 rounded bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
+                </div>
+                Sales
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="expandedSections.sales ? 'rotate-90' : ''"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <div 
+              v-show="expandedSections.sales"
+              class="mt-1 space-y-0.5 ml-4 pl-2 border-l border-gray-200"
+            >
               <NuxtLink 
                 to="/sales/orders" 
                 :class="$route.path.startsWith('/sales/orders') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'orders'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                Orders
+                <span>Orders</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">89</span>
+                </div>
               </NuxtLink>
 
               <NuxtLink 
                 to="/sales/invoices" 
                 :class="$route.path.startsWith('/sales/invoices') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'invoices'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Invoices
+                <span>Invoices</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">156</span>
+                </div>
               </NuxtLink>
 
               <NuxtLink 
                 to="/sales/payments" 
                 :class="$route.path.startsWith('/sales/payments') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'payments'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
-                Payments
+                <span>Payments</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">67</span>
+                </div>
               </NuxtLink>
             </div>
           </div>
 
           <!-- Operations Section -->
-          <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Operations</p>
-            <div class="mt-2 space-y-1">
+          <div class="pt-2" v-if="!searchQuery || navigationSections.operations.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))">
+            <button 
+              @click="toggleSection('operations')"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <div class="w-4 h-4 mr-2 rounded bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                </div>
+                Operations
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="expandedSections.operations ? 'rotate-90' : ''"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <div 
+              v-show="expandedSections.operations"
+              class="mt-1 space-y-0.5 ml-4 pl-2 border-l border-gray-200"
+            >
               <NuxtLink 
                 to="/operations/products" 
                 :class="$route.path.startsWith('/operations/products') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'products'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
-                Products
+                <span>Products</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">342</span>
+                </div>
               </NuxtLink>
               
               <NuxtLink 
                 to="/operations/inventory" 
                 :class="$route.path.startsWith('/operations/inventory') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'inventory'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 3v10a2 2 0 002 2h8a2 2 0 002-2V7M9 7h6" />
                 </svg>
-                Inventory
+                <span>Inventory</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">78</span>
+                </div>
               </NuxtLink>
 
               <NuxtLink 
                 to="/operations/procurement" 
                 :class="$route.path.startsWith('/operations/procurement') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'procurement'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2v0a2 2 0 01-2-2v-1" />
                 </svg>
-                Procurement
+                <span>Procurement</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">23</span>
+                </div>
               </NuxtLink>
             </div>
           </div>
 
           <!-- Finance Section -->
-          <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Finance</p>
-            <div class="mt-2 space-y-1">
+          <div class="pt-2" v-if="!searchQuery || navigationSections.finance.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))">
+            <button 
+              @click="toggleSection('finance')"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <div class="w-4 h-4 mr-2 rounded bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
+                </div>
+                Finance
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="expandedSections.finance ? 'rotate-90' : ''"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <div 
+              v-show="expandedSections.finance"
+              class="mt-1 space-y-0.5 ml-4 pl-2 border-l border-gray-200"
+            >
               <NuxtLink 
                 to="/finance/accounting" 
                 :class="$route.path.startsWith('/finance/accounting') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'accounting'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
-                Accounting
+                <span>Accounting</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">145</span>
+                </div>
               </NuxtLink>
             </div>
           </div>
 
           <!-- People Section -->
-          <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">People</p>
-            <div class="mt-2 space-y-1">
+          <div class="pt-2" v-if="!searchQuery || navigationSections.people.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))">
+            <button 
+              @click="toggleSection('people')"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <div class="w-4 h-4 mr-2 rounded bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                People
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="expandedSections.people ? 'rotate-90' : ''"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <div 
+              v-show="expandedSections.people"
+              class="mt-1 space-y-0.5 ml-4 pl-2 border-l border-gray-200"
+            >
               <NuxtLink 
                 to="/people/hr" 
                 :class="$route.path.startsWith('/people/hr') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'human resources'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                Human Resources
+                <span>Human Resources</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">52</span>
+                </div>
               </NuxtLink>
             </div>
           </div>
 
           <!-- Automation Section -->
-          <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Automation</p>
-            <div class="mt-2 space-y-1">
+          <div class="pt-2" v-if="!searchQuery || navigationSections.automation.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))">
+            <button 
+              @click="toggleSection('automation')"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <div class="w-4 h-4 mr-2 rounded bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                Automation
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="expandedSections.automation ? 'rotate-90' : ''"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <div 
+              v-show="expandedSections.automation"
+              class="mt-1 space-y-0.5 ml-4 pl-2 border-l border-gray-200"
+            >
               <NuxtLink 
                 to="/automation/workflows" 
                 :class="$route.path.startsWith('/automation/workflows') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'workflows'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Workflows
+                <span>Workflows</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">12</span>
+                </div>
               </NuxtLink>
 
               <NuxtLink 
                 to="/automation/ai-suggestions" 
                 :class="$route.path.startsWith('/automation/ai-suggestions') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'ai insights'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
-                AI Insights
+                <span>AI Insights</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-2 py-0.5 rounded-full font-medium">NEW</span>
+                </div>
               </NuxtLink>
 
               <NuxtLink 
                 to="/automation/chatbot" 
                 :class="$route.path.startsWith('/automation/chatbot') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'ai assistant'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-                AI Assistant
+                <span>AI Assistant</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-2 py-0.5 rounded-full font-medium">BETA</span>
+                </div>
               </NuxtLink>
 
               <NuxtLink 
                 to="/automation/customer-portal" 
                 :class="$route.path.startsWith('/automation/customer-portal') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'customer portal'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
-                Customer Portal
+                <span>Customer Portal</span>
               </NuxtLink>
             </div>
           </div>
 
           <!-- Analytics & Reports -->
-          <div class="pt-4">
-            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
-            <div class="mt-2 space-y-1">
+          <div class="pt-2" v-if="!searchQuery || navigationSections.analytics.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))">
+            <button 
+              @click="toggleSection('analytics')"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <div class="w-4 h-4 mr-2 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                Analytics
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="expandedSections.analytics ? 'rotate-90' : ''"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <div 
+              v-show="expandedSections.analytics"
+              class="mt-1 space-y-0.5 ml-4 pl-2 border-l border-gray-200"
+            >
               <NuxtLink 
                 to="/analytics/reports" 
                 :class="$route.path.startsWith('/analytics/reports') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'reports analytics'.includes(searchQuery.toLowerCase())"
               >
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                Reports & Analytics
+                <span>Reports & Analytics</span>
+                <div class="ml-auto">
+                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">28</span>
+                </div>
               </NuxtLink>
             </div>
           </div>
 
           <!-- Settings -->
-          <div class="pt-4">
+          <div class="pt-4 border-t border-gray-200 mt-4">
             <NuxtLink 
               to="/settings" 
               :class="$route.path.startsWith('/settings') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+              v-if="!searchQuery || 'settings'.includes(searchQuery.toLowerCase())"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -456,11 +720,15 @@
         <p class="px-2">© 2024 Synthesq - A Product by TheMessieCompany. All rights reserved.</p>
       </footer>
     </div>
+    
+    <!-- Notification System -->
+    <NotificationSystem />
   </div>
 </template>
 
 <script setup>
 import Badge from '~/components/ui/Badge.vue'
+import NotificationSystem from '~/components/ui/NotificationSystem.vue'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -471,6 +739,54 @@ const sidebarOpen = ref(false)
 // User menu state
 const userMenuOpen = ref(false)
 const userMenuRef = ref(null)
+
+// Search functionality
+const searchQuery = ref('')
+
+// Section expansion state
+const expandedSections = reactive({
+  crm: true,
+  sales: true, 
+  operations: false,
+  finance: false,
+  people: false,
+  automation: false,
+  analytics: true
+})
+
+// Navigation sections for search filtering
+const navigationSections = reactive({
+  crm: [
+    { name: 'Leads', path: '/crm/leads' },
+    { name: 'Opportunities', path: '/crm/opportunities' },
+    { name: 'Customers', path: '/crm/customers' }
+  ],
+  sales: [
+    { name: 'Orders', path: '/sales/orders' },
+    { name: 'Invoices', path: '/sales/invoices' },
+    { name: 'Payments', path: '/sales/payments' }
+  ],
+  operations: [
+    { name: 'Products', path: '/operations/products' },
+    { name: 'Inventory', path: '/operations/inventory' },
+    { name: 'Procurement', path: '/operations/procurement' }
+  ],
+  finance: [
+    { name: 'Accounting', path: '/finance/accounting' }
+  ],
+  people: [
+    { name: 'Human Resources', path: '/people/hr' }
+  ],
+  automation: [
+    { name: 'Workflows', path: '/automation/workflows' },
+    { name: 'AI Insights', path: '/automation/ai-suggestions' },
+    { name: 'AI Assistant', path: '/automation/chatbot' },
+    { name: 'Customer Portal', path: '/automation/customer-portal' }
+  ],
+  analytics: [
+    { name: 'Reports & Analytics', path: '/analytics/reports' }
+  ]
+})
 
 // Close sidebar when route changes (mobile)
 watch(() => route.path, () => {
@@ -511,6 +827,27 @@ onUnmounted(() => {
     document.body.style.overflow = ''
   }
   document.removeEventListener('click', handleClickOutside)
+})
+
+// Section toggle functionality
+const toggleSection = (sectionName) => {
+  expandedSections[sectionName] = !expandedSections[sectionName]
+}
+
+
+// Auto-expand sections when searching
+watch(searchQuery, (newQuery) => {
+  if (newQuery) {
+    // Expand all sections when searching
+    Object.keys(expandedSections).forEach(section => {
+      const hasMatches = navigationSections[section].some(item => 
+        item.name.toLowerCase().includes(newQuery.toLowerCase())
+      )
+      if (hasMatches) {
+        expandedSections[section] = true
+      }
+    })
+  }
 })
 
 const sectionName = computed(() => {
@@ -558,7 +895,10 @@ const businessName = computed(() => {
   return authStore.businessId || 'Unknown Business'
 })
 
+const { info } = useNotifications()
+
 const handleLogout = async () => {
+  info('Signing out...', 'Thanks for using Synthesq!', { duration: 2000 })
   await authStore.logout()
 }
 </script>

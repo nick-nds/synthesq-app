@@ -1,6 +1,16 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   const authStore = useAuthStore()
   
+  // Initialize auth store from storage on first load
+  if (process.client && !authStore.user && !authStore.isLoading) {
+    authStore.initializeFromStorage()
+    
+    // If we have stored data, check if it's still valid
+    if (authStore.token) {
+      await authStore.checkAuthStatus()
+    }
+  }
+  
   // If auth store is currently loading, wait for it to complete
   if (authStore.isLoading) {
     // Wait for loading to complete or timeout

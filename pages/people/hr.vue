@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header with actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Human Resources</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="'Human Resources management system for employee data, payroll processing, performance tracking, and organizational structure.'">
+          <h2 class="text-2xl font-bold text-gray-900">Human Resources</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Manage employees, payroll, and HR processes</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -31,10 +33,13 @@
     <!-- HR Overview -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Employees</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Total number of employees in the organization across all departments and status levels.'">
+              <p class="text-sm text-gray-600 mb-1">Total Employees</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ mockEmployees.length }}</p>
+            <p class="text-xs text-success-600 mt-2">+3 new hires this month</p>
           </div>
           <div class="p-3 bg-primary-100 rounded-lg">
             <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,13 +47,15 @@
             </svg>
           </div>
         </div>
-        <p class="text-xs text-success-600 mt-2">+3 new hires this month</p>
+        </div>
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Active Employees</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('employee_retention')">
+              <p class="text-sm text-gray-600 mb-1">Active Employees</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ activeEmployees }}</p>
           </div>
           <div class="p-3 bg-success-100 rounded-lg">
@@ -325,13 +332,15 @@
           </div>
         </div>
       </div>
-    </div>
 
   </div>
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
 const { formatCurrency } = useMockCRM()
+const { getHelpText } = useHelpContent()
 
 definePageMeta({
   middleware: 'auth'

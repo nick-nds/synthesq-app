@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Customer Portal</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="getHelpText('customerPortal')">
+          <h2 class="text-2xl font-bold text-gray-900">Customer Portal</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Self-service portal for customer management</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -231,6 +233,10 @@
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
+const { getHelpText } = useHelpContent()
+
 definePageMeta({
   middleware: 'auth'
 })

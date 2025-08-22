@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header with actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Workflow Automation</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="getHelpText('workflowAutomation')">
+          <h2 class="text-2xl font-bold text-gray-900">Workflow Automation</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Automate business processes and workflows</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -33,8 +35,10 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Workflows</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('totalWorkflows')">
+              <p class="text-sm text-gray-600">Total Workflows</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ mockWorkflows.length }}</p>
           </div>
           <div class="p-3 bg-primary-100 rounded-lg">
@@ -48,8 +52,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Active Workflows</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('activeWorkflows')">
+              <p class="text-sm text-gray-600">Active Workflows</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ activeWorkflows }}</p>
           </div>
           <div class="p-3 bg-success-100 rounded-lg">
@@ -63,8 +69,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Executions Today</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('workflowExecutions')">
+              <p class="text-sm text-gray-600">Executions Today</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ totalExecutions }}</p>
           </div>
           <div class="p-3 bg-accent-100 rounded-lg">
@@ -78,8 +86,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Success Rate</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('workflowSuccessRate')">
+              <p class="text-sm text-gray-600">Success Rate</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ successRate }}%</p>
           </div>
           <div class="p-3 bg-warning-100 rounded-lg">
@@ -96,7 +106,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Recent Executions -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Executions</h3>
+        <HelpTooltip :content="getHelpText('recentExecutions')">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Executions</h3>
+        </HelpTooltip>
         <div class="space-y-3">
           <div v-for="execution in recentExecutions.slice(0, 5)" :key="execution.id" class="flex items-center justify-between">
             <div class="flex items-center">
@@ -116,7 +128,9 @@
 
       <!-- Workflow Categories -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Workflow Categories</h3>
+        <HelpTooltip :content="getHelpText('workflowCategories')">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Workflow Categories</h3>
+        </HelpTooltip>
         <div class="space-y-3">
           <div v-for="category in workflowCategories" :key="category.name" class="flex items-center justify-between">
             <div class="flex items-center">
@@ -257,6 +271,10 @@
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
+const { getHelpText } = useHelpContent()
+
 definePageMeta({
   middleware: 'auth'
 })

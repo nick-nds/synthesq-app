@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header with actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Invoices</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="'Invoices are bills sent to customers for products or services. Track invoice status, payments, and outstanding balances.'">
+          <h2 class="text-2xl font-bold text-gray-900">Invoices</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Create, send, and track customer invoices</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -31,25 +33,30 @@
     <!-- Invoice Stats -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Invoices</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Total number of invoices created in the system, including drafts, sent, paid, and overdue invoices.'">
+              <p class="text-sm text-gray-600 mb-2">Total Invoices</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ mockInvoices.length }}</p>
+            <p class="text-xs text-success-600 mt-2">+5 this month</p>
           </div>
-          <div class="p-3 bg-primary-100 rounded-lg">
+          <div class="p-3 bg-primary-100 rounded-lg flex-shrink-0">
             <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
         </div>
-        <p class="text-xs text-success-600 mt-2">+5 this month</p>
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Paid Invoices</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Number of invoices that have been fully paid by customers. This indicates successful revenue collection.'">
+              <p class="text-sm text-gray-600 mb-2">Paid Invoices</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ paidInvoices }}</p>
+            <p class="text-xs text-gray-600 mt-2">{{ Math.round((paidInvoices / mockInvoices.length) * 100) }}% of total</p>
           </div>
           <div class="p-3 bg-success-100 rounded-lg">
             <svg class="w-6 h-6 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,14 +64,17 @@
             </svg>
           </div>
         </div>
-        <p class="text-xs text-gray-600 mt-2">{{ Math.round((paidInvoices / mockInvoices.length) * 100) }}% of total</p>
+        </div>
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Revenue</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Total amount of money collected from paid invoices. This represents actual revenue received.'">
+              <p class="text-sm text-gray-600 mb-2">Total Revenue</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(totalRevenue) }}</p>
+            <p class="text-xs text-success-600 mt-2">+18% revenue growth</p>
           </div>
           <div class="p-3 bg-accent-100 rounded-lg">
             <svg class="w-6 h-6 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,14 +82,16 @@
             </svg>
           </div>
         </div>
-        <p class="text-xs text-success-600 mt-2">+18% revenue growth</p>
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Overdue</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Invoices that have passed their due date without payment. These require follow-up action for collection.'">
+              <p class="text-sm text-gray-600 mb-2">Overdue</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ overdueInvoices }}</p>
+            <p class="text-xs text-error-600 mt-2">{{ formatCurrency(overdueAmount) }} overdue</p>
           </div>
           <div class="p-3 bg-error-100 rounded-lg">
             <svg class="w-6 h-6 text-error-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +99,6 @@
             </svg>
           </div>
         </div>
-        <p class="text-xs text-error-600 mt-2">{{ formatCurrency(overdueAmount) }} overdue</p>
       </div>
     </div>
 
@@ -297,13 +308,15 @@
           </div>
         </div>
       </div>
-    </div>
 
   </div>
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
 const { mockInvoices, formatCurrency, getStatusColor } = useMockCRM()
+const { getHelpText } = useHelpContent()
 
 definePageMeta({
   middleware: 'auth'

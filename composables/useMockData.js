@@ -1,317 +1,98 @@
+import { generateAllMockData, generateAnalyticsData } from '~/utils/mockDataGenerator.js'
+
 export const useMockData = () => {
-  const customers = [
-    {
-      id: '1',
-      name: 'John Smith',
-      email: 'john.smith@acmecorp.com',
-      phone: '+1 (555) 123-4567',
-      company: 'Acme Corporation',
-      status: 'active',
-      createdAt: '2024-01-15',
-      lastContact: '2024-06-10',
-      value: 25000
-    },
-    {
-      id: '2',
-      name: 'Sarah Johnson',
-      email: 'sarah@techstartup.io',
-      phone: '+1 (555) 987-6543',
-      company: 'Tech Startup Inc',
-      status: 'active',
-      createdAt: '2024-02-20',
-      lastContact: '2024-06-12',
-      value: 15000
-    },
-    {
-      id: '3',
-      name: 'Mike Davis',
-      email: 'mike.davis@enterprise.com',
-      phone: '+1 (555) 456-7890',
-      company: 'Enterprise Solutions',
-      status: 'prospect',
-      createdAt: '2024-03-10',
-      lastContact: '2024-06-08',
-      value: 50000
-    },
-    {
-      id: '4',
-      name: 'Lisa Chen',
-      email: 'lisa@innovate.com',
-      phone: '+1 (555) 321-9876',
-      company: 'Innovate Co',
-      status: 'active',
-      createdAt: '2024-04-05',
-      lastContact: '2024-06-14',
-      value: 35000
-    }
-  ]
+  // Generate comprehensive mock data
+  const mockData = generateAllMockData()
+  const analytics = generateAnalyticsData()
 
-  const leads = [
-    {
-      id: '1',
-      title: 'Enterprise Software License',
-      customer: 'Acme Corporation',
-      value: 75000,
-      stage: 'negotiation',
-      probability: 80,
-      expectedCloseDate: '2024-07-15',
-      assignedTo: 'Alex Thompson',
-      createdAt: '2024-05-20'
-    },
-    {
-      id: '2',
-      title: 'Cloud Migration Project',
-      customer: 'Tech Startup Inc',
-      value: 45000,
-      stage: 'proposal',
-      probability: 60,
-      expectedCloseDate: '2024-08-01',
-      assignedTo: 'Maria Garcia',
-      createdAt: '2024-06-01'
-    },
-    {
-      id: '3',
-      title: 'CRM Implementation',
-      customer: 'Enterprise Solutions',
-      value: 120000,
-      stage: 'qualified',
-      probability: 40,
-      expectedCloseDate: '2024-09-30',
-      assignedTo: 'David Wilson',
-      createdAt: '2024-06-10'
-    }
-  ]
+  const customers = mockData.customers.map(customer => ({
+    ...customer,
+    // Convert for compatibility with existing views
+    name: customer.primary_contact.first_name + ' ' + customer.primary_contact.last_name,
+    company: customer.name,
+    value: customer.lifetime_value,
+    lastContact: new Date(customer.updated_at).toISOString().split('T')[0],
+    createdAt: new Date(customer.created_at).toISOString().split('T')[0]
+  }))
 
-  const products = [
-    {
-      id: '1',
-      name: 'Professional CRM License',
-      sku: 'CRM-PRO-001',
-      category: 'Software',
-      price: 299,
-      cost: 150,
-      stock: 100,
-      minStock: 10,
-      status: 'active',
-      description: 'Professional CRM software license for small to medium businesses'
-    },
-    {
-      id: '2',
-      name: 'Enterprise ERP Suite',
-      sku: 'ERP-ENT-001',
-      category: 'Software',
-      price: 1299,
-      cost: 600,
-      stock: 50,
-      minStock: 5,
-      status: 'active',
-      description: 'Complete enterprise resource planning solution'
-    },
-    {
-      id: '3',
-      name: 'Support & Maintenance',
-      sku: 'SUP-001',
-      category: 'Service',
-      price: 199,
-      cost: 50,
-      stock: 999,
-      minStock: 0,
-      status: 'active',
-      description: 'Annual support and maintenance package'
-    }
-  ]
+  const leads = mockData.leads.map(lead => ({
+    ...lead,
+    // Convert for compatibility with existing views
+    title: `${lead.first_name} ${lead.last_name} - ${lead.company}`,
+    customer: lead.company,
+    value: lead.expected_value || 0,
+    stage: lead.status.toLowerCase(),
+    probability: lead.score,
+    expectedCloseDate: lead.expected_close_date,
+    assignedTo: `User ${lead.assigned_to}`,
+    createdAt: new Date(lead.created_at).toISOString().split('T')[0]
+  }))
 
-  const invoices = [
-    {
-      id: '1',
-      invoiceNumber: 'INV-2024-001',
-      customer: 'Acme Corporation',
-      amount: 15000,
-      status: 'paid',
-      dueDate: '2024-06-30',
-      createdAt: '2024-06-01',
-      items: [
-        {
-          id: '1',
-          productId: '1',
-          productName: 'Professional CRM License',
-          quantity: 50,
-          unitPrice: 299,
-          total: 14950
-        }
-      ]
-    },
-    {
-      id: '2',
-      invoiceNumber: 'INV-2024-002',
-      customer: 'Tech Startup Inc',
-      amount: 2597,
-      status: 'sent',
-      dueDate: '2024-07-15',
-      createdAt: '2024-06-15',
-      items: [
-        {
-          id: '2',
-          productId: '1',
-          productName: 'Professional CRM License',
-          quantity: 5,
-          unitPrice: 299,
-          total: 1495
-        },
-        {
-          id: '3',
-          productId: '3',
-          productName: 'Support & Maintenance',
-          quantity: 5,
-          unitPrice: 199,
-          total: 995
-        }
-      ]
-    }
-  ]
+  const products = mockData.products.map(product => ({
+    ...product,
+    // Convert for compatibility
+    stock: product.inventory.quantity_on_hand,
+    minStock: product.inventory.reorder_point,
+    status: product.status.toLowerCase()
+  }))
 
-  const dashboardMetrics = {
-    totalRevenue: 487500,
-    totalCustomers: 248,
-    totalLeads: 34,
-    totalProducts: 12,
-    monthlyRevenue: [45000, 52000, 48000, 61000, 58000, 67000, 72000, 69000, 75000, 82000, 78000, 85000],
+  const invoices = mockData.invoices.map(invoice => ({
+    ...invoice,
+    // Convert for compatibility  
+    invoiceNumber: invoice.invoice_number,
+    customer: `Customer ${invoice.customer_id}`,
+    amount: invoice.total_amount,
+    dueDate: invoice.due_date,
+    createdAt: invoice.issue_date,
+    items: invoice.items.map(item => ({
+      id: item.id,
+      productId: 'product-1',
+      productName: item.description,
+      quantity: item.quantity,
+      unitPrice: item.unit_price,
+      total: item.line_total
+    }))
+  }))
+
+  const orders = mockData.orders.map(order => ({
+    ...order,
+    // Convert for compatibility
+    orderNumber: order.order_number,
+    customer: `Customer ${order.customer_id}`,
+    customerId: order.customer_id,
+    total: order.total_amount,
+    orderDate: order.order_date,
+    expectedDelivery: order.required_date,
+    shippingAddress: '123 Business Ave, City, State 12345',
+    paymentMethod: order.payment_method || 'Credit Card',
+    paymentStatus: order.status === 'DELIVERED' ? 'paid' : 'pending',
+    items: order.items.map(item => ({
+      id: item.id,
+      productId: item.product_id,
+      productName: item.product_name,
+      quantity: item.quantity,
+      unitPrice: item.unit_price,
+      total: item.line_total
+    }))
+  }))
+
+  // Enhanced dashboard metrics with real data
+  const dashboardMetrics = reactive({
+    totalRevenue: analytics.performanceMetrics.monthlyRecurringRevenue,
+    totalCustomers: customers.length,
+    totalLeads: leads.length,
+    totalProducts: products.length,
+    totalOrders: orders.length,
+    monthlyRevenue: analytics.revenueData.map(d => d.revenue),
     recentLeads: leads.slice(0, 5),
-    topCustomers: customers.sort((a, b) => b.value - a.value).slice(0, 5)
-  }
-
-  const orders = [
-    {
-      id: '1',
-      orderNumber: 'ORD-2024-001',
-      customer: 'Acme Corporation',
-      customerId: '1',
-      total: 29850,
-      status: 'shipped',
-      orderDate: '2024-06-10',
-      expectedDelivery: '2024-06-15',
-      shippingAddress: '123 Business Ave, New York, NY 10001',
-      paymentMethod: 'Credit Card',
-      paymentStatus: 'paid',
-      items: [
-        {
-          id: '1',
-          productId: '1',
-          productName: 'Professional CRM License',
-          quantity: 100,
-          unitPrice: 299,
-          total: 29900
-        }
-      ]
-    },
-    {
-      id: '2',
-      orderNumber: 'ORD-2024-002',
-      customer: 'Tech Startup Inc',
-      customerId: '2',
-      total: 2597,
-      status: 'processing',
-      orderDate: '2024-06-12',
-      expectedDelivery: '2024-06-18',
-      shippingAddress: '456 Innovation Blvd, San Francisco, CA 94105',
-      paymentMethod: 'Bank Transfer',
-      paymentStatus: 'paid',
-      items: [
-        {
-          id: '2',
-          productId: '1',
-          productName: 'Professional CRM License',
-          quantity: 5,
-          unitPrice: 299,
-          total: 1495
-        },
-        {
-          id: '3',
-          productId: '3',
-          productName: 'Support & Maintenance',
-          quantity: 5,
-          unitPrice: 199,
-          total: 995
-        }
-      ]
-    },
-    {
-      id: '3',
-      orderNumber: 'ORD-2024-003',
-      customer: 'Enterprise Solutions',
-      customerId: '3',
-      total: 64950,
-      status: 'pending',
-      orderDate: '2024-06-14',
-      expectedDelivery: '2024-06-20',
-      shippingAddress: '789 Corporate Dr, Chicago, IL 60601',
-      paymentMethod: 'Purchase Order',
-      paymentStatus: 'pending',
-      items: [
-        {
-          id: '4',
-          productId: '2',
-          productName: 'Enterprise ERP Suite',
-          quantity: 50,
-          unitPrice: 1299,
-          total: 64950
-        }
-      ]
-    },
-    {
-      id: '4',
-      orderNumber: 'ORD-2024-004',
-      customer: 'Innovate Co',
-      customerId: '4',
-      total: 1796,
-      status: 'delivered',
-      orderDate: '2024-06-08',
-      expectedDelivery: '2024-06-12',
-      shippingAddress: '321 Creative Way, Austin, TX 78701',
-      paymentMethod: 'Credit Card',
-      paymentStatus: 'paid',
-      items: [
-        {
-          id: '5',
-          productId: '1',
-          productName: 'Professional CRM License',
-          quantity: 6,
-          unitPrice: 299,
-          total: 1794
-        }
-      ]
-    },
-    {
-      id: '5',
-      orderNumber: 'ORD-2024-005',
-      customer: 'Global Industries',
-      customerId: '5',
-      total: 15925,
-      status: 'cancelled',
-      orderDate: '2024-06-05',
-      shippingAddress: '555 Industrial Park, Detroit, MI 48201',
-      paymentMethod: 'Credit Card',
-      paymentStatus: 'refunded',
-      items: [
-        {
-          id: '6',
-          productId: '2',
-          productName: 'Enterprise ERP Suite',
-          quantity: 10,
-          unitPrice: 1299,
-          total: 12990
-        },
-        {
-          id: '7',
-          productId: '3',
-          productName: 'Support & Maintenance',
-          quantity: 15,
-          unitPrice: 199,
-          total: 2985
-        }
-      ]
-    }
-  ]
+    topCustomers: customers.sort((a, b) => b.value - a.value).slice(0, 5),
+    newLeadsToday: Math.floor(Math.random() * 15) + 5,
+    activeOpportunities: mockData.opportunities.length,
+    monthlyRecurringRevenue: analytics.performanceMetrics.monthlyRecurringRevenue,
+    customerAcquisitionCost: analytics.performanceMetrics.customerAcquisitionCost,
+    customerLifetimeValue: analytics.performanceMetrics.customerLifetimeValue,
+    conversionRate: analytics.performanceMetrics.conversionRate
+  })
 
   const salesMetrics = {
     totalOrders: orders.length,
@@ -320,12 +101,88 @@ export const useMockData = () => {
     pendingOrders: orders.filter(o => o.status === 'pending').length,
     monthlyOrders: [15, 22, 18, 28, 25, 32, 29, 35, 38, 42, 45, 48],
     recentOrders: orders.slice(0, 5),
-    topProducts: [
-      { name: 'Professional CRM License', quantity: 161, revenue: 48183 },
-      { name: 'Enterprise ERP Suite', quantity: 60, revenue: 77940 },
-      { name: 'Support & Maintenance', quantity: 20, revenue: 3980 }
-    ]
+    topProducts: analytics.salesByProduct
   }
+
+  // Generate recent activities for the activity feed
+  const recentActivities = reactive([
+    {
+      id: 1,
+      type: 'deal',
+      title: 'Deal closed successfully',
+      description: `Enterprise CRM Suite deal worth $${(Math.random() * 50000 + 10000).toFixed(0)} closed with ${customers[Math.floor(Math.random() * customers.length)]?.company || 'TechCorp Inc'}`,
+      user: 'John Smith',
+      timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(),
+      amount: Math.floor(Math.random() * 50000) + 10000,
+      priority: 'high'
+    },
+    {
+      id: 2,
+      type: 'lead',
+      title: 'New lead captured',
+      description: `High-value lead from ${leads[Math.floor(Math.random() * leads.length)]?.customer || 'Global Solutions'} showing interest in our platform`,
+      user: 'Sarah Johnson',
+      timestamp: new Date(Date.now() - Math.random() * 7200000).toISOString(),
+      priority: 'medium'
+    },
+    {
+      id: 3,
+      type: 'customer',
+      title: 'Customer onboarded',
+      description: `Successfully onboarded ${customers[Math.floor(Math.random() * customers.length)]?.company || 'Innovation Labs'} as a new enterprise customer`,
+      user: 'Mike Chen',
+      timestamp: new Date(Date.now() - Math.random() * 10800000).toISOString(),
+      priority: 'high'
+    },
+    {
+      id: 4,
+      type: 'order',
+      title: 'Large order received',
+      description: `Order ${orders[Math.floor(Math.random() * orders.length)]?.orderNumber || 'ORD000123'} for multiple product licenses`,
+      user: 'Emily Davis',
+      timestamp: new Date(Date.now() - Math.random() * 14400000).toISOString(),
+      amount: Math.floor(Math.random() * 75000) + 15000,
+      priority: 'medium'
+    },
+    {
+      id: 5,
+      type: 'payment',
+      title: 'Payment received',
+      description: `Invoice payment of $${(Math.random() * 25000 + 5000).toFixed(0)} processed successfully`,
+      user: 'System',
+      timestamp: new Date(Date.now() - Math.random() * 18000000).toISOString(),
+      amount: Math.floor(Math.random() * 25000) + 5000,
+      priority: 'low'
+    },
+    {
+      id: 6,
+      type: 'meeting',
+      title: 'Sales meeting scheduled',
+      description: `Product demo scheduled with ${customers[Math.floor(Math.random() * customers.length)]?.company || 'TechStart Inc'} for next week`,
+      user: 'Alex Rodriguez',
+      timestamp: new Date(Date.now() - Math.random() * 21600000).toISOString(),
+      priority: 'medium'
+    },
+    {
+      id: 7,
+      type: 'task',
+      title: 'Proposal submitted',
+      description: `Custom proposal submitted to ${mockData.opportunities[Math.floor(Math.random() * mockData.opportunities.length)]?.name || 'Enterprise Software Implementation'}`,
+      user: 'Jessica Wilson',
+      timestamp: new Date(Date.now() - Math.random() * 25200000).toISOString(),
+      priority: 'high'
+    },
+    {
+      id: 8,
+      type: 'invoice',
+      title: 'Invoice generated',
+      description: `Monthly recurring invoice ${invoices[Math.floor(Math.random() * invoices.length)]?.invoiceNumber || 'INV000456'} sent to customer`,
+      user: 'System',
+      timestamp: new Date(Date.now() - Math.random() * 28800000).toISOString(),
+      amount: Math.floor(Math.random() * 15000) + 2500,
+      priority: 'low'
+    }
+  ])
 
   return {
     customers,
@@ -334,6 +191,15 @@ export const useMockData = () => {
     invoices,
     orders,
     dashboardMetrics,
-    salesMetrics
+    salesMetrics,
+    recentActivities,
+    
+    // Enhanced data for charts and analytics
+    opportunities: mockData.opportunities,
+    employees: mockData.employees,
+    revenueData: analytics.revenueData,
+    salesByProduct: analytics.salesByProduct,
+    customerAcquisition: analytics.customerAcquisition,
+    performanceMetrics: analytics.performanceMetrics
   }
 }

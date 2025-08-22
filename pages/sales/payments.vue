@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header with actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Payments</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="'Payment processing and tracking system for managing customer payments, refunds, and transaction reconciliation.'">
+          <h2 class="text-2xl font-bold text-gray-900">Payments</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Track and manage payment transactions</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -32,8 +34,10 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Payments</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('totalPayments')">
+              <p class="text-sm text-gray-600">Total Payments</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ mockPayments.length }}</p>
           </div>
           <div class="p-3 bg-primary-100 rounded-lg">
@@ -47,8 +51,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Completed</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('completedPayments')">
+              <p class="text-sm text-gray-600">Completed</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ completedPayments }}</p>
           </div>
           <div class="p-3 bg-success-100 rounded-lg">
@@ -62,8 +68,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Amount</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('totalRevenue')">
+              <p class="text-sm text-gray-600">Total Amount</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(totalPaymentAmount) }}</p>
           </div>
           <div class="p-3 bg-accent-100 rounded-lg">
@@ -77,8 +85,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Failed Payments</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('failedPayments')">
+              <p class="text-sm text-gray-600">Failed Payments</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ failedPayments }}</p>
           </div>
           <div class="p-3 bg-error-100 rounded-lg">
@@ -94,7 +104,9 @@
     <!-- Payment Method Breakdown -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">Payment Methods</h3>
+        <HelpTooltip :content="getHelpText('paymentMethods')">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Payment Methods</h3>
+        </HelpTooltip>
         <div class="space-y-3">
           <div v-for="method in paymentMethods" :key="method.name" class="flex items-center justify-between">
             <div class="flex items-center">
@@ -110,7 +122,9 @@
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">Payment Gateways</h3>
+        <HelpTooltip :content="getHelpText('paymentGateways')">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Payment Gateways</h3>
+        </HelpTooltip>
         <div class="space-y-3">
           <div v-for="gateway in paymentGateways" :key="gateway.name" class="flex items-center justify-between">
             <div class="flex items-center">
@@ -126,7 +140,9 @@
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">Recent Activity</h3>
+        <HelpTooltip :content="getHelpText('recentPayments')">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Recent Activity</h3>
+        </HelpTooltip>
         <div class="space-y-3">
           <div v-for="payment in mockPayments.slice(0, 3)" :key="payment.id" class="flex items-center justify-between">
             <div class="flex items-center">
@@ -374,7 +390,10 @@
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
 const { mockPayments, formatCurrency, getStatusColor } = useMockCRM()
+const { getHelpText } = useHelpContent()
 
 definePageMeta({
   middleware: 'auth'

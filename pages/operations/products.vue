@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header with actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Products</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="'Product catalog management system for organizing, pricing, and tracking all items you sell to customers.'">
+          <h2 class="text-2xl font-bold text-gray-900">Products</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Manage your product catalog and inventory</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -32,8 +34,10 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Products</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('totalProducts')">
+              <p class="text-sm text-gray-600">Total Products</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ mockProducts.length }}</p>
           </div>
           <div class="p-3 bg-primary-100 rounded-lg">
@@ -47,8 +51,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Active Products</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('activeProducts')">
+              <p class="text-sm text-gray-600">Active Products</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ activeProducts }}</p>
           </div>
           <div class="p-3 bg-success-100 rounded-lg">
@@ -62,8 +68,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Value</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('inventoryValue')">
+              <p class="text-sm text-gray-600">Total Value</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(totalInventoryValue) }}</p>
           </div>
           <div class="p-3 bg-accent-100 rounded-lg">
@@ -77,8 +85,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Low Stock</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('lowStockProducts')">
+              <p class="text-sm text-gray-600">Low Stock</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ lowStockProducts }}</p>
           </div>
           <div class="p-3 bg-warning-100 rounded-lg">
@@ -295,7 +305,10 @@
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
 const { mockProducts, formatCurrency, getStatusColor } = useMockCRM()
+const { getHelpText } = useHelpContent()
 
 definePageMeta({
   middleware: 'auth'

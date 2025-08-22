@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Reports & Analytics</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="'Generate detailed reports and analyze business performance across all departments and metrics.'">
+          <h2 class="text-2xl font-bold text-gray-900">Reports & Analytics</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Comprehensive business intelligence and reporting</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -31,9 +33,11 @@
     <!-- Report Categories -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200 cursor-pointer hover:shadow-md transition-shadow" @click="selectedCategory = 'sales'">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Sales Reports</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Reports on sales performance, revenue analysis, conversion rates, and team productivity.'">
+              <p class="text-sm text-gray-600 mb-1">Sales Reports</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">12</p>
           </div>
           <div class="p-3 bg-blue-100 rounded-lg">
@@ -46,9 +50,11 @@
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200 cursor-pointer hover:shadow-md transition-shadow" @click="selectedCategory = 'finance'">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Financial Reports</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Financial reports including profit & loss statements, cash flow analysis, and expense tracking.'">
+              <p class="text-sm text-gray-600 mb-1">Financial Reports</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">8</p>
           </div>
           <div class="p-3 bg-green-100 rounded-lg">
@@ -61,9 +67,11 @@
       </div>
       
       <div class="bg-white rounded-lg p-4 border border-gray-200 cursor-pointer hover:shadow-md transition-shadow" @click="selectedCategory = 'customer'">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Customer Reports</p>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <HelpTooltip :content="'Customer analytics including satisfaction scores, retention rates, and lifetime value analysis.'">
+              <p class="text-sm text-gray-600 mb-1">Customer Reports</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">6</p>
           </div>
           <div class="p-3 bg-purple-100 rounded-lg">
@@ -224,6 +232,10 @@
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
+const { getHelpText } = useHelpContent()
+
 definePageMeta({
   middleware: 'auth'
 })

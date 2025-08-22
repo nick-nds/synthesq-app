@@ -1,13 +1,15 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
+import MockAuthService from '~/utils/mockAuth.js'
 
 export const useAuthStore = defineStore('auth', () => {
   // State
   const user = ref(null)
   const businessId = ref(null)
   const isLoading = ref(false)
+  const token = ref(null)
 
   // Getters
-  const isAuthenticated = computed(() => !!user.value)
+  const isAuthenticated = computed(() => !!user.value && !!token.value)
 
   // Actions
   const setUser = (userData) => {
@@ -15,6 +17,14 @@ export const useAuthStore = defineStore('auth', () => {
     // Persist to localStorage
     if (process.client) {
       localStorage.setItem('user', JSON.stringify(userData))
+    }
+  }
+
+  const setToken = (tokenValue) => {
+    token.value = tokenValue
+    // Persist to localStorage
+    if (process.client) {
+      localStorage.setItem('auth_token', tokenValue)
     }
   }
 
@@ -29,129 +39,28 @@ export const useAuthStore = defineStore('auth', () => {
   const clearAuth = () => {
     user.value = null
     businessId.value = null
+    token.value = null
     // Clear from localStorage
     if (process.client) {
       localStorage.removeItem('user')
       localStorage.removeItem('business_id')
+      localStorage.removeItem('auth_token')
     }
   }
 
-  const getCsrfToken = () => {
-    if (!process.client) return null
-    
-    // Extract XSRF-TOKEN from cookies
-    const cookies = document.cookie.split(';')
-    for (let cookie of cookies) {
-      const [name, value] = cookie.trim().split('=')
-      if (name === 'XSRF-TOKEN') {
-        return decodeURIComponent(value)
-      }
-    }
-    return null
-  }
-
-  const getCsrfCookie = async () => {
+  // Mock authentication methods for demo
+  const getCurrentUser = async () => {
     try {
-      const config = useRuntimeConfig()
-      await $fetch('/csrf-cookie', {
-        baseURL: config.public.apiBase + config.public.apiPrefix,
-        credentials: 'include'
-      })
-      return true
-    } catch (error) {
-      console.error('Failed to get CSRF cookie:', error)
-      return false
-    }
-  }
-
-  const makeAuthenticatedRequest = async (url, options = {}) => {
-    const config = useRuntimeConfig()
-    const csrfToken = getCsrfToken()
-    
-    console.log(`Making request to ${url} with CSRF token:`, csrfToken ? csrfToken.substring(0, 50) + '...' : 'No token')
-    
-    const headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      ...(businessId.value ? { 'X-Business-ID': businessId.value } : {}),
-      ...(csrfToken ? { 'X-XSRF-TOKEN': csrfToken } : {}),
-      ...(options.headers || {})
-    }
-
-    try {
-      const response = await $fetch.raw(url, {
-        baseURL: config.public.apiBase + config.public.apiPrefix,
-        credentials: 'include',
-        ...options,
-        headers
-      })
-
-      // Check if server returned a new CSRF token in Set-Cookie headers
-      if (process.client && response.headers) {
-        const setCookieHeaders = response.headers.get('set-cookie')
-        if (setCookieHeaders) {
-          // Extract XSRF-TOKEN from Set-Cookie header
-          const xsrfTokenMatch = setCookieHeaders.match(/XSRF-TOKEN=([^;]+)/)
-          if (xsrfTokenMatch) {
-            const newXsrfToken = decodeURIComponent(xsrfTokenMatch[1])
-            const currentToken = getCsrfToken()
-            if (newXsrfToken !== currentToken) {
-              console.log('New CSRF token received in Set-Cookie, will be automatically used')
-            }
-          }
-        }
-        
-        // Also check for token in response headers (fallback)
-        const newXsrfToken = response.headers.get('X-XSRF-TOKEN') || response.headers.get('x-xsrf-token')
-        if (newXsrfToken && newXsrfToken !== csrfToken) {
-          document.cookie = `XSRF-TOKEN=${encodeURIComponent(newXsrfToken)}; path=/; SameSite=Lax`
-          console.log('Updated CSRF token from response headers')
-        }
-      }
-
-      return response._data
-    } catch (error) {
-      // If CSRF token mismatch (419), try to refresh the token and retry once
-      if (error.status === 419) {
-        console.log('CSRF token mismatch, refreshing token and retrying...')
-        const csrfSuccess = await getCsrfCookie()
-        if (csrfSuccess) {
-          const newCsrfToken = getCsrfToken()
-          const retryHeaders = {
-            ...headers,
-            ...(newCsrfToken ? { 'X-XSRF-TOKEN': newCsrfToken } : {})
-          }
-          
-          const retryResponse = await $fetch.raw(url, {
-            baseURL: config.public.apiBase + config.public.apiPrefix,
-            credentials: 'include',
-            ...options,
-            headers: retryHeaders
-          })
-          
-          return retryResponse._data
-        }
-      }
-      throw error
-    }
-  }
-
-  const getCurrentUser = async (forceRefreshToken = false) => {
-    try {
-      // If we need to force refresh (like after login), wait for cookies to update
-      if (forceRefreshToken && process.client) {
-        await new Promise(resolve => setTimeout(resolve, 100))
-      }
-      
-      const response = await makeAuthenticatedRequest('/user')
-      return response
-    } catch (error) {
-      if (error.status === 401) {
-        // User not authenticated
+      // Check if we have a valid token
+      if (!token.value) {
         return null
       }
+      
+      const userData = MockAuthService.getCurrentUser(token.value)
+      return userData
+    } catch (error) {
       console.error('Failed to get current user:', error)
-      throw error
+      return null
     }
   }
 
@@ -161,22 +70,23 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       isLoading.value = true
       
-      // Step 1: Get CSRF cookie
-      const csrfSuccess = await getCsrfCookie()
-      if (!csrfSuccess) {
-        return false
+      // Check if we have stored auth data
+      if (process.client) {
+        const storedToken = localStorage.getItem('auth_token')
+        if (storedToken) {
+          setToken(storedToken)
+          const userData = await getCurrentUser()
+          
+          if (userData) {
+            setUser(userData)
+            setBusinessId(userData.businessId)
+            return true
+          }
+        }
       }
       
-      // Step 2: Try to get authenticated user
-      const userData = await getCurrentUser()
-      
-      if (userData) {
-        setUser(userData)
-        return true
-      } else {
-        clearAuth()
-        return false
-      }
+      clearAuth()
+      return false
     } catch (error) {
       console.error('Auth check failed:', error)
       clearAuth()
@@ -214,44 +124,29 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       isLoading.value = true
       
-      // Set business ID first so it's available for API requests
-      setBusinessId(credentials.business_id)
+      // Add realistic loading delay for demo
+      await MockAuthService.mockDelay()
       
-      // Call login endpoint with CSRF token (cookie should already be set from page load)
-      const loginResponse = await makeAuthenticatedRequest('/login', {
-        method: 'POST',
-        headers: {
-          'X-Business-ID': credentials.business_id
-        },
-        body: {
-          email: credentials.email,
-          password: credentials.password
-        }
-      })
+      // Validate credentials using mock service
+      const userData = MockAuthService.validateCredentials(
+        credentials.business_id,
+        credentials.email,
+        credentials.password
+      )
       
-      // Get authenticated user data with fresh token
-      const userData = await getCurrentUser(true)
+      // Generate mock token
+      const mockToken = MockAuthService.generateMockToken(userData)
       
-      if (userData) {
-        setUser(userData)
-        return { success: true, user: userData }
-      } else {
-        clearAuth()
-        return { success: false, error: 'Failed to get user data after login' }
-      }
+      // Set auth data
+      setUser(userData)
+      setToken(mockToken)
+      setBusinessId(userData.businessId)
+      
+      return { success: true, user: userData }
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('Login error:', error.message)
       clearAuth()
-      
-      if (error.status === 401) {
-        return { success: false, error: 'Invalid credentials. Please check your email and password.' }
-      } else if (error.status === 422) {
-        return { success: false, error: error.data?.message || 'Validation error. Please check your input.' }
-      } else if (error.status === 403) {
-        return { success: false, error: 'Access denied. Please check your business ID.' }
-      } else {
-        return { success: false, error: 'Login failed. Please try again.' }
-      }
+      return { success: false, error: error.message }
     } finally {
       isLoading.value = false
     }
@@ -259,9 +154,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      await makeAuthenticatedRequest('/logout', {
-        method: 'POST'
-      })
+      // Add slight delay to simulate logout request
+      await MockAuthService.mockDelay(300)
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
@@ -282,6 +176,12 @@ export const useAuthStore = defineStore('auth', () => {
         }
       }
 
+      // Restore token from localStorage
+      const storedToken = localStorage.getItem('auth_token')
+      if (storedToken) {
+        token.value = storedToken
+      }
+
       // Restore business ID from localStorage
       const storedBusinessId = localStorage.getItem('business_id')
       if (storedBusinessId) {
@@ -290,28 +190,40 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Permission helper methods
+  const hasPermission = (permission) => {
+    if (!user.value) return false
+    return MockAuthService.hasPermission(user.value, permission)
+  }
+
+  const canAccessModule = (module) => {
+    if (!user.value) return false
+    return MockAuthService.canAccessModule(user.value, module)
+  }
+
   return {
     // State
     user: readonly(user),
     businessId: readonly(businessId),
     isLoading: readonly(isLoading),
+    token: readonly(token),
     
     // Getters
     isAuthenticated,
     
     // Actions
     setUser,
+    setToken,
     setBusinessId,
     clearAuth,
     initializeFromStorage,
     checkAuthStatus,
-    getCsrfCookie,
-    getCsrfToken,
     getCurrentUser,
     handleAuthRedirect,
     login,
     logout,
-    makeAuthenticatedRequest
+    hasPermission,
+    canAccessModule
   }
 })
 

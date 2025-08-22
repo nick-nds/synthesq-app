@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header with actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Accounting</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="getHelpText('accounting')">
+          <h2 class="text-2xl font-bold text-gray-900">Accounting</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Manage your financial accounts and transactions</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -32,8 +34,10 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Assets</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('totalAssets')">
+              <p class="text-sm text-gray-600">Total Assets</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(totalAssets) }}</p>
           </div>
           <div class="p-3 bg-success-100 rounded-lg">
@@ -47,8 +51,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Liabilities</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('totalLiabilities')">
+              <p class="text-sm text-gray-600">Total Liabilities</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(totalLiabilities) }}</p>
           </div>
           <div class="p-3 bg-warning-100 rounded-lg">
@@ -62,8 +68,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Net Income</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('netIncome')">
+              <p class="text-sm text-gray-600">Net Income</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(netIncome) }}</p>
           </div>
           <div class="p-3 bg-primary-100 rounded-lg">
@@ -77,8 +85,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Cash Flow</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('cashFlow')">
+              <p class="text-sm text-gray-600">Cash Flow</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(cashFlow) }}</p>
           </div>
           <div class="p-3 bg-accent-100 rounded-lg">
@@ -95,7 +105,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Account Categories -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Categories</h3>
+        <HelpTooltip :content="getHelpText('accountCategories')">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Categories</h3>
+        </HelpTooltip>
         <div class="space-y-3">
           <div v-for="category in accountCategories" :key="category.name" class="flex items-center justify-between">
             <div class="flex items-center">
@@ -112,7 +124,9 @@
 
       <!-- Recent Transactions -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
+        <HelpTooltip :content="getHelpText('recentTransactions')">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
+        </HelpTooltip>
         <div class="space-y-3">
           <div v-for="transaction in recentTransactions.slice(0, 5)" :key="transaction.id" class="flex items-center justify-between">
             <div class="flex items-center">
@@ -134,7 +148,9 @@
 
       <!-- Account Balances -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Account Balances</h3>
+        <HelpTooltip :content="getHelpText('accountBalances')">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Account Balances</h3>
+        </HelpTooltip>
         <div class="space-y-3">
           <div v-for="account in topAccounts" :key="account.code" class="flex items-center justify-between">
             <div>
@@ -153,11 +169,18 @@
     <!-- Journal Entries Table -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
       <div class="px-6 py-4 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-gray-900">Journal Entries</h3>
+        <HelpTooltip :content="getHelpText('journalEntries')">
+          <h3 class="text-lg font-semibold text-gray-900">Journal Entries</h3>
+        </HelpTooltip>
       </div>
       
       <!-- Search and Filters -->
       <div class="p-4 border-b border-gray-200">
+        <div class="mb-3">
+          <HelpTooltip :content="getHelpText('accountingFilters')">
+            <h4 class="text-md font-medium text-gray-900">Search & Filter Journal Entries</h4>
+          </HelpTooltip>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <input 
             v-model="searchQuery" 
@@ -227,7 +250,10 @@
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
 const { formatCurrency } = useMockCRM()
+const { getHelpText } = useHelpContent()
 
 definePageMeta({
   middleware: 'auth'

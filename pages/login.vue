@@ -166,16 +166,25 @@
         <!-- Demo credentials -->
         <div class="mt-6 pt-6 border-t border-gray-200">
           <div class="text-center">
-            <p class="text-xs text-gray-500 mb-3">Demo Credentials:</p>
-            <div class="grid grid-cols-1 gap-3 text-xs">
-              <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs text-gray-500 mb-3">Demo Credentials (Click to auto-fill):</p>
+            <div class="grid grid-cols-1 gap-2 text-xs">
+              <div 
+                v-for="(demo, index) in demoCredentials" 
+                :key="index"
+                class="bg-gradient-to-r from-gray-50 to-primary-50 rounded-lg p-3 border border-gray-200 hover:border-primary-200 transition-colors"
+              >
                 <button
-                  @click="fillDemoCredentials('admin')"
-                  class="text-primary-600 hover:text-primary-500 font-medium block w-full text-left"
+                  @click="fillDemoCredentials(demo)"
+                  class="text-primary-600 hover:text-primary-700 font-medium block w-full text-left"
                 >
-                  <span class="block font-semibold">Demo Access</span>
-                  <span class="block text-gray-600">tenant1</span>
-                  <span class="block text-gray-600">test@example.com / password</span>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-semibold">{{ demo.label }}</span>
+                    <div class="text-xs px-2 py-1 bg-primary-100 text-primary-700 rounded-full">
+                      {{ demo.businessId }}
+                    </div>
+                  </div>
+                  <div class="text-gray-600 text-xs mb-1">{{ demo.email }}</div>
+                  <div class="text-gray-500 text-xs">{{ demo.description }}</div>
                 </button>
               </div>
             </div>
@@ -194,12 +203,15 @@
 </template>
 
 <script setup>
+import { DEMO_CREDENTIALS } from '~/utils/mockAuth.js'
+
 // Set layout to false to use custom layout
 definePageMeta({
   layout: false
 })
 
 const router = useRouter()
+const demoCredentials = DEMO_CREDENTIALS
 
 // Form state
 const form = reactive({
@@ -261,8 +273,9 @@ const validateForm = () => {
   return true
 }
 
-// Auth store
+// Auth store and notifications
 const authStore = useAuthStore()
+const { success, error: notifyError } = useNotifications()
 
 // Handle login
 const handleLogin = async () => {
@@ -282,6 +295,11 @@ const handleLogin = async () => {
     })
     
     if (result.success) {
+      success(
+        'Welcome back!',
+        `Successfully signed in as ${result.user.name}`,
+        { duration: 3000 }
+      )
       await router.push('/')
     } else {
       loginError.value = result.error || 'Invalid credentials. Please check your business ID, email, and password.'
@@ -295,14 +313,14 @@ const handleLogin = async () => {
 }
 
 // Fill demo credentials
-const fillDemoCredentials = async (type) => {
-  if (type === 'admin') {
-    form.businessId = 'tenant1'
-    form.email = 'test@example.com'
-    form.password = 'password'
-  }
+const fillDemoCredentials = async (demo) => {
+  form.businessId = demo.businessId
+  form.email = demo.email
+  form.password = demo.password
+  
   errors.email = ''
   errors.password = ''
+  loginError.value = ''
 }
 
 // Clear errors on input and update localStorage for business ID

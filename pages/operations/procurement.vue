@@ -2,8 +2,10 @@
   <div class="space-y-6">
     <!-- Header with actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900">Procurement</h2>
+      <div class="flex-1">
+        <HelpTooltip :content="getHelpText('procurement')">
+          <h2 class="text-2xl font-bold text-gray-900">Procurement</h2>
+        </HelpTooltip>
         <p class="text-sm text-gray-600 mt-1">Manage vendors, purchase orders, and procurement workflows</p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -32,8 +34,10 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Purchase Orders</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('purchaseOrders')">
+              <p class="text-sm text-gray-600">Total Purchase Orders</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ mockPurchaseOrders.length }}</p>
           </div>
           <div class="p-3 bg-primary-100 rounded-lg">
@@ -47,8 +51,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Active Vendors</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('activeVendors')">
+              <p class="text-sm text-gray-600">Active Vendors</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ activeVendors }}</p>
           </div>
           <div class="p-3 bg-success-100 rounded-lg">
@@ -62,8 +68,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Spend</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('totalSpend')">
+              <p class="text-sm text-gray-600">Total Spend</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(totalSpend) }}</p>
           </div>
           <div class="p-3 bg-accent-100 rounded-lg">
@@ -77,8 +85,10 @@
       
       <div class="bg-white rounded-lg p-4 border border-gray-200">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Pending Approvals</p>
+          <div class="flex-1">
+            <HelpTooltip :content="getHelpText('pendingApprovals')">
+              <p class="text-sm text-gray-600">Pending Approvals</p>
+            </HelpTooltip>
             <p class="text-2xl font-bold text-gray-900">{{ pendingOrders }}</p>
           </div>
           <div class="p-3 bg-warning-100 rounded-lg">
@@ -92,28 +102,40 @@
     </div>
 
     <!-- View Toggle -->
-    <div class="flex items-center space-x-4">
-      <button 
-        @click="viewMode = 'orders'" 
-        :class="viewMode === 'orders' ? 'text-primary-600 font-medium' : 'text-gray-600 hover:text-gray-900'"
-        class="text-sm"
-      >
-        Purchase Orders
-      </button>
-      <span class="text-gray-400">|</span>
-      <button 
-        @click="viewMode = 'vendors'" 
-        :class="viewMode === 'vendors' ? 'text-primary-600 font-medium' : 'text-gray-600 hover:text-gray-900'"
-        class="text-sm"
-      >
-        Vendors
-      </button>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <HelpTooltip :content="getHelpText('procurementWorkflow')">
+          <h3 class="text-lg font-semibold text-gray-900">Procurement Management</h3>
+        </HelpTooltip>
+        <div class="flex items-center space-x-4">
+          <button 
+            @click="viewMode = 'orders'" 
+            :class="viewMode === 'orders' ? 'text-primary-600 font-medium' : 'text-gray-600 hover:text-gray-900'"
+            class="text-sm"
+          >
+            Purchase Orders
+          </button>
+          <span class="text-gray-400">|</span>
+          <button 
+            @click="viewMode = 'vendors'" 
+            :class="viewMode === 'vendors' ? 'text-primary-600 font-medium' : 'text-gray-600 hover:text-gray-900'"
+            class="text-sm"
+          >
+            Vendors
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Purchase Orders View -->
     <div v-if="viewMode === 'orders'">
       <!-- Status Filter Tabs -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div class="mb-3">
+          <HelpTooltip :content="getHelpText('purchaseOrderStatus')">
+            <h4 class="text-md font-medium text-gray-900">Filter by Purchase Order Status</h4>
+          </HelpTooltip>
+        </div>
         <div class="flex flex-wrap gap-2">
           <button 
             v-for="status in purchaseOrderStatuses" 
@@ -139,6 +161,11 @@
 
       <!-- Search and Filters -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div class="mb-3">
+          <HelpTooltip :content="getHelpText('procurementFilters')">
+            <h4 class="text-md font-medium text-gray-900">Search & Filter Purchase Orders</h4>
+          </HelpTooltip>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <input 
@@ -164,6 +191,11 @@
 
       <!-- Purchase Orders Table -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <HelpTooltip :content="getHelpText('purchaseOrderTracking')">
+            <h4 class="text-lg font-semibold text-gray-900">Purchase Order Tracking</h4>
+          </HelpTooltip>
+        </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -223,6 +255,11 @@
     <div v-else>
       <!-- Vendor Categories -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div class="mb-3">
+          <HelpTooltip :content="getHelpText('vendorCategories')">
+            <h4 class="text-md font-medium text-gray-900">Vendor Categories</h4>
+          </HelpTooltip>
+        </div>
         <div class="flex flex-wrap gap-2">
           <button 
             v-for="category in vendorCategories" 
@@ -411,7 +448,10 @@
 </template>
 
 <script setup>
+import HelpTooltip from '~/components/ui/HelpTooltip.vue'
+
 const { mockPurchaseOrders, mockVendors, formatCurrency, getStatusColor } = useMockCRM()
+const { getHelpText } = useHelpContent()
 
 definePageMeta({
   middleware: 'auth'
