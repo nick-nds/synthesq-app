@@ -12,9 +12,7 @@
       <!-- Logo and Close Button -->
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <NuxtLink to="/" class="flex items-center hover:opacity-80 transition-opacity" @click="sidebarOpen = false">
-          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-            <span class="text-white font-bold text-sm">SQ</span>
-          </div>
+          <img src="/logo.png" alt="Synthesq" class="w-8 h-8 rounded-lg object-cover" />
           <span class="ml-3 text-lg font-semibold text-gray-900">Synthesq</span>
         </NuxtLink>
         <!-- Close button for mobile -->

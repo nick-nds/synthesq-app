@@ -57,6 +57,10 @@ export default defineNuxtConfig({
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'description', content: 'Modern CRM/ERP Platform - Orchestrate Your Business Operations with Synthesq by TheMessieCompany' }
+      ],
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/logo.png' },
+        { rel: 'apple-touch-icon', href: '/logo.png' }
       ]
     }
   },

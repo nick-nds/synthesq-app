@@ -21,7 +21,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-neutral-700 mb-2">Company Name</label>
-            <input type="text" value="BistroKeep Inc." class="input">
+            <input type="text" value="Synthesq Inc." class="input">
           </div>
           <div>
             <label class="block text-sm font-medium text-neutral-700 mb-2">Industry</label>
@@ -34,7 +34,7 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-neutral-700 mb-2">Email</label>
-            <input type="email" value="info@bistrokeep.com" class="input">
+            <input type="email" value="info@synthesq.com" class="input">
           </div>
           <div>
             <label class="block text-sm font-medium text-neutral-700 mb-2">Phone</label>
@@ -410,7 +410,7 @@ const users = [
   {
     id: '1',
     name: 'John Doe',
-    email: 'john.doe@bistrokeep.com',
+    email: 'john.doe@synthesq.com',
     role: 'Administrator',
     department: 'IT',
     lastLogin: '2 hours ago',
@@ -419,7 +419,7 @@ const users = [
   {
     id: '2',
     name: 'Sarah Wilson',
-    email: 'sarah.wilson@bistrokeep.com',
+    email: 'sarah.wilson@synthesq.com',
     role: 'Sales Manager',
     department: 'Sales',
     lastLogin: '1 day ago',
@@ -428,7 +428,7 @@ const users = [
   {
     id: '3',
     name: 'Mike Chen',
-    email: 'mike.chen@bistrokeep.com',
+    email: 'mike.chen@synthesq.com',
     role: 'Sales Rep',
     department: 'Sales',
     lastLogin: '3 days ago',
@@ -437,7 +437,7 @@ const users = [
   {
     id: '4',
     name: 'Lisa Garcia',
-    email: 'lisa.garcia@bistrokeep.com',
+    email: 'lisa.garcia@synthesq.com',
     role: 'Accountant',
     department: 'Finance',
     lastLogin: '1 week ago',

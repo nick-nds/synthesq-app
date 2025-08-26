@@ -4,10 +4,8 @@
       <!-- Logo -->
       <div class="flex justify-center">
         <div class="flex items-center">
-          <div class="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center">
-            <span class="text-white font-bold text-xl">BK</span>
-          </div>
-          <span class="ml-3 text-2xl font-bold text-neutral-900">BistroKeep</span>
+          <img src="/logo.png" alt="Synthesq" class="w-12 h-12 rounded-xl object-cover" />
+          <span class="ml-3 text-2xl font-bold text-neutral-900">Synthesq</span>
         </div>
       </div>
       
@@ -186,7 +184,7 @@
     <!-- Footer -->
     <div class="mt-8 text-center">
       <p class="text-xs text-neutral-500">
-        © 2024 BistroKeep CRM/ERP. All rights reserved.
+        © 2024 Synthesq by TheMessieCompany. All rights reserved.
       </p>
     </div>
   </div>

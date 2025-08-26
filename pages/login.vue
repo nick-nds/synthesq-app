@@ -4,9 +4,7 @@
       <!-- Logo -->
       <div class="flex justify-center">
         <div class="flex items-center">
-          <div class="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center">
-            <span class="text-white font-bold text-xl">SQ</span>
-          </div>
+          <img src="/logo.png" alt="Synthesq" class="w-12 h-12 rounded-xl object-cover" />
           <span class="ml-3 text-2xl font-bold text-gray-900">Synthesq</span>
         </div>
       </div>
@@ -43,7 +41,7 @@
               >
             </div>
             <p class="mt-2 text-xs text-gray-500">
-              Your unique business identifier (e.g., bistro-downtown, acme-corp)
+              Your unique business identifier (e.g., synthesq-downtown, acme-corp)
             </p>
           </div>
 

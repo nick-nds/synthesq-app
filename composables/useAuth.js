@@ -9,7 +9,7 @@ export const useAuth = () => {
       id: 1,
       name: 'John Admin',
       email: 'admin@synthesq.com',
-      business_id: 'bistro-downtown',
+      business_id: 'synthesq-downtown',
       role: 'admin'
     },
     {
@@ -23,7 +23,7 @@ export const useAuth = () => {
 
   // Mock businesses
   const mockBusinesses = [
-    { id: 'bistro-downtown', name: 'Bistro Downtown', plan: 'premium' },
+    { id: 'synthesq-downtown', name: 'Synthesq Downtown', plan: 'premium' },
     { id: 'acme-corp', name: 'Acme Corporation', plan: 'enterprise' },
     { id: 'tech-startup', name: 'Tech Startup Inc', plan: 'standard' },
     { id: 'demo-business', name: 'Demo Business', plan: 'trial' },
@@ -80,7 +80,7 @@ export const useAuth = () => {
 
       // Check credentials
       const validCredentials = [
-        { email: 'admin@synthesq.com', password: 'admin123', business: 'bistro-downtown' },
+        { email: 'admin@synthesq.com', password: 'admin123', business: 'synthesq-downtown' },
         { email: 'manager@synthesq.com', password: 'manager123', business: 'acme-corp' }
       ]
 
