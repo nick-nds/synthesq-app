@@ -541,13 +541,7 @@
             </div>
             <div class="flex items-center space-x-2 sm:space-x-4">
               <!-- Notifications -->
-              <button class="relative p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                </svg>
-                <!-- Notification badge -->
-                <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-              </button>
+              <NotificationDropdown />
               
               <!-- User Menu -->
               <div class="relative" ref="userMenuRef">
@@ -727,6 +721,7 @@
 <script setup>
 import Badge from '~/components/ui/Badge.vue'
 import NotificationSystem from '~/components/ui/NotificationSystem.vue'
+import NotificationDropdown from '~/components/ui/NotificationDropdown.vue'
 
 const route = useRoute()
 const authStore = useAuthStore()
