@@ -506,6 +506,155 @@
             </div>
           </div>
 
+          <!-- Extensions Section -->
+          <div class="pt-2" v-if="!searchQuery || navigationSections.extensions.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))">
+            <button 
+              @click="toggleSection('extensions')"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 transition-colors"
+            >
+              <div class="flex items-center">
+                <div class="w-4 h-4 mr-2 rounded bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H7a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                  </svg>
+                </div>
+                Extensions
+                <div class="ml-2">
+                  <span class="text-xs bg-gradient-to-r from-violet-500 to-purple-600 text-white px-1.5 py-0.5 rounded-full font-medium">NEW</span>
+                </div>
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="expandedSections.extensions ? 'rotate-90' : ''"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <div 
+              v-show="expandedSections.extensions"
+              class="mt-1 space-y-0.5 ml-4 pl-2 border-l border-gray-200"
+            >
+              <!-- Extension Store/Marketplace -->
+              <NuxtLink 
+                to="/extensions" 
+                :class="$route.path === '/extensions' ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                class="text-sm"
+                v-if="!searchQuery || 'marketplace store'.includes(searchQuery.toLowerCase())"
+              >
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span>Extension Store</span>
+                <div class="ml-auto flex items-center space-x-1">
+                  <div class="w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse"></div>
+                </div>
+              </NuxtLink>
+
+              <!-- Active Extensions -->
+              <div class="py-1">
+                <div class="text-xs text-gray-400 px-3 mb-2 font-medium">Active Extensions</div>
+                
+                <!-- Healthcare Extension -->
+                <NuxtLink 
+                  to="/extensions/healthcare" 
+                  :class="$route.path.startsWith('/extensions/healthcare') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                  class="text-sm group"
+                  v-if="!searchQuery || 'healthcare hipaa'.includes(searchQuery.toLowerCase())"
+                >
+                  <div class="w-4 h-4 mr-3 bg-gradient-to-br from-red-400 to-pink-500 rounded flex items-center justify-center flex-shrink-0">
+                    <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                  <span class="flex-1">Healthcare Suite</span>
+                  <div class="ml-auto flex items-center space-x-1">
+                    <span class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">Active</span>
+                  </div>
+                </NuxtLink>
+
+                <!-- Manufacturing Extension -->
+                <NuxtLink 
+                  to="/extensions/manufacturing" 
+                  :class="$route.path.startsWith('/extensions/manufacturing') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                  class="text-sm group"
+                  v-if="!searchQuery || 'manufacturing production'.includes(searchQuery.toLowerCase())"
+                >
+                  <div class="w-4 h-4 mr-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded flex items-center justify-center flex-shrink-0">
+                    <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                  </div>
+                  <span class="flex-1">Manufacturing Pro</span>
+                  <div class="ml-auto flex items-center space-x-1">
+                    <span class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">Active</span>
+                  </div>
+                </NuxtLink>
+
+                <!-- Real Estate Extension -->
+                <NuxtLink 
+                  to="/extensions/real-estate" 
+                  :class="$route.path.startsWith('/extensions/real-estate') ? 'sidebar-link-active' : 'sidebar-link-inactive'"
+                  class="text-sm group"
+                  v-if="!searchQuery || 'real estate property'.includes(searchQuery.toLowerCase())"
+                >
+                  <div class="w-4 h-4 mr-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded flex items-center justify-center flex-shrink-0">
+                    <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <span class="flex-1">Real Estate Plus</span>
+                  <div class="ml-auto flex items-center space-x-1">
+                    <span class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">Active</span>
+                  </div>
+                </NuxtLink>
+              </div>
+
+              <!-- Available Extensions Preview -->
+              <div class="py-1 border-t border-gray-100 mt-2">
+                <div class="text-xs text-gray-400 px-3 mb-2 font-medium">Available Extensions</div>
+                
+                <div class="text-sm px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                  <div class="flex items-center">
+                    <div class="w-4 h-4 mr-3 bg-gradient-to-br from-amber-400 to-orange-500 rounded flex items-center justify-center flex-shrink-0">
+                      <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                      </svg>
+                    </div>
+                    <span class="flex-1">Financial Services</span>
+                    <span class="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">Install</span>
+                  </div>
+                </div>
+
+                <div class="text-sm px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                  <div class="flex items-center">
+                    <div class="w-4 h-4 mr-3 bg-gradient-to-br from-cyan-400 to-blue-500 rounded flex items-center justify-center flex-shrink-0">
+                      <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    </div>
+                    <span class="flex-1">Education Management</span>
+                    <span class="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">Install</span>
+                  </div>
+                </div>
+
+                <div class="text-sm px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                  <div class="flex items-center">
+                    <div class="w-4 h-4 mr-3 bg-gradient-to-br from-rose-400 to-pink-500 rounded flex items-center justify-center flex-shrink-0">
+                      <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                      </svg>
+                    </div>
+                    <span class="flex-1">Hospitality Suite</span>
+                    <span class="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">Install</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Settings -->
           <div class="pt-4 border-t border-gray-200 mt-4">
             <NuxtLink 
@@ -744,7 +893,8 @@ const expandedSections = reactive({
   finance: false,
   people: false,
   automation: false,
-  analytics: true
+  analytics: true,
+  extensions: true
 })
 
 // Navigation sections for search filtering
@@ -778,6 +928,15 @@ const navigationSections = reactive({
   ],
   analytics: [
     { name: 'Reports & Analytics', path: '/analytics/reports' }
+  ],
+  extensions: [
+    { name: 'Extension Store', path: '/extensions' },
+    { name: 'Healthcare Suite', path: '/extensions/healthcare' },
+    { name: 'Manufacturing Pro', path: '/extensions/manufacturing' },
+    { name: 'Real Estate Plus', path: '/extensions/real-estate' },
+    { name: 'Financial Services', path: '/extensions/financial-services' },
+    { name: 'Education Management', path: '/extensions/education' },
+    { name: 'Hospitality Suite', path: '/extensions/hospitality' }
   ]
 })
 
@@ -872,6 +1031,9 @@ const sectionName = computed(() => {
   
   // Analytics Section
   if (path.startsWith('/analytics/')) return 'ANALYTICS'
+  
+  // Extensions Section
+  if (path.startsWith('/extensions/')) return 'EXTENSIONS'
   
   // Default fallback
   return 'SYNTHESQ'
