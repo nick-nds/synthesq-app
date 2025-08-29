@@ -22,6 +22,18 @@
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
       <div class="card-premium">
+        <!-- Demo Notice -->
+        <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div class="flex items-center">
+            <svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-sm text-blue-700">
+              <strong>Demo Mode:</strong> Form is pre-filled with demo credentials. Just click "Sign in" to continue.
+            </p>
+          </div>
+        </div>
+
         <form class="space-y-6" @submit.prevent="handleLogin">
           <!-- Business ID -->
           <div>
@@ -211,11 +223,11 @@ definePageMeta({
 const router = useRouter()
 const demoCredentials = DEMO_CREDENTIALS
 
-// Form state
+// Form state - prefilled with demo credentials for convenience
 const form = reactive({
-  businessId: '',
-  email: '',
-  password: '',
+  businessId: 'synthesq-demo',
+  email: 'admin@synthesq.com',
+  password: 'admin123',
   remember: false
 })
 
