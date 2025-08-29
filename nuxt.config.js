@@ -26,7 +26,7 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/css/main.css'],
   
-  // SPA mode configuration
+  // SPA mode configuration for GitHub Pages
   ssr: false,
   
   typescript: {
@@ -65,10 +65,26 @@ export default defineNuxtConfig({
     }
   },
 
-  // Nitro configuration for static hosting
+  // Static SPA configuration for GitHub Pages
   nitro: {
     prerender: {
-      routes: ['/']
+      routes: [
+        '/',
+        '/extensions',
+        '/extensions/healthcare',
+        '/extensions/manufacturing',
+        '/extensions/real-estate'
+      ]
     }
+  },
+
+  // GitHub Pages deployment configuration
+  experimental: {
+    payloadExtraction: false
+  },
+
+  // SPA fallback for client-side routing
+  generate: {
+    fallback: true
   }
 })
