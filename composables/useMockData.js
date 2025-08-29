@@ -78,7 +78,7 @@ export const useMockData = () => {
 
   // Enhanced dashboard metrics with real data
   const dashboardMetrics = reactive({
-    totalRevenue: analytics.performanceMetrics.monthlyRecurringRevenue,
+    totalRevenue: analytics.performanceMetrics.monthlyRecurringRevenue || 0,
     totalCustomers: customers.length,
     totalLeads: leads.length,
     totalProducts: products.length,
@@ -88,10 +88,10 @@ export const useMockData = () => {
     topCustomers: customers.sort((a, b) => b.value - a.value).slice(0, 5),
     newLeadsToday: Math.floor(Math.random() * 15) + 5,
     activeOpportunities: mockData.opportunities.length,
-    monthlyRecurringRevenue: analytics.performanceMetrics.monthlyRecurringRevenue,
-    customerAcquisitionCost: analytics.performanceMetrics.customerAcquisitionCost,
-    customerLifetimeValue: analytics.performanceMetrics.customerLifetimeValue,
-    conversionRate: analytics.performanceMetrics.conversionRate
+    monthlyRecurringRevenue: analytics.performanceMetrics.monthlyRecurringRevenue || 0,
+    customerAcquisitionCost: analytics.performanceMetrics.customerAcquisitionCost || 0,
+    customerLifetimeValue: analytics.performanceMetrics.customerLifetimeValue || 0,
+    conversionRate: analytics.performanceMetrics.conversionRate || 0
   })
 
   const salesMetrics = {

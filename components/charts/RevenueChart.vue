@@ -91,6 +91,9 @@ const targetAchievement = computed(() => {
 })
 
 const formatCurrency = (amount) => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return '0'
+  }
   return new Intl.NumberFormat('en-US').format(amount)
 }
 

@@ -296,6 +296,9 @@ const businessHealthScore = computed(() => {
 })
 
 const formatCurrency = (amount) => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return '0'
+  }
   return new Intl.NumberFormat('en-US').format(amount)
 }
 
@@ -305,16 +308,38 @@ onMounted(() => {
     // Add count-up animation for metrics
     const countElements = document.querySelectorAll('.animate-count')
     countElements.forEach(el => {
-      const finalValue = parseInt(el.textContent)
+      // Extract numeric value from formatted text
+      const textContent = el.textContent
+      let finalValue = 0
+      
+      // Check if it's a currency value (contains $)
+      if (textContent.includes('$')) {
+        // Remove $ and commas, then parse
+        const numericText = textContent.replace(/[$,]/g, '')
+        finalValue = parseInt(numericText) || 0
+      } else {
+        finalValue = parseInt(textContent) || 0
+      }
+      
       let currentValue = 0
       const increment = finalValue / 30
       const interval = setInterval(() => {
         currentValue += increment
         if (currentValue >= finalValue) {
-          el.textContent = finalValue
+          // Restore original format for final value
+          if (textContent.includes('$')) {
+            el.textContent = `$${formatCurrency(finalValue)}`
+          } else {
+            el.textContent = finalValue
+          }
           clearInterval(interval)
         } else {
-          el.textContent = Math.floor(currentValue)
+          // Show animated value in same format
+          if (textContent.includes('$')) {
+            el.textContent = `$${formatCurrency(Math.floor(currentValue))}`
+          } else {
+            el.textContent = Math.floor(currentValue)
+          }
         }
       }, 50)
     })
