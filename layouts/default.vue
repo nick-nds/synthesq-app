@@ -894,7 +894,7 @@ const expandedSections = reactive({
   people: false,
   automation: false,
   analytics: true,
-  extensions: true
+  extensions: false
 })
 
 // Navigation sections for search filtering
