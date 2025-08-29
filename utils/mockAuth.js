@@ -1,83 +1,19 @@
 // Mock authentication data for demo
 export const MOCK_USERS = {
-  'tenant1': {
-    'test@example.com': {
+  'synthesq-demo': {
+    'admin@synthesq.com': {
       id: 'user-1',
       name: 'John Smith',
-      email: 'test@example.com',
-      password: 'password', // In real app, this would be hashed
+      email: 'admin@synthesq.com',
+      password: 'admin123',
       role: 'admin',
       permissions: ['all'],
       avatar: null,
-      businessId: 'tenant1',
-      businessName: 'Acme Corporation',
-      title: 'CEO',
+      businessId: 'synthesq-demo',
+      businessName: 'Synthesq Demo Company',
+      title: 'System Administrator',
       department: 'Executive',
       lastLogin: new Date().toISOString(),
-      created_at: '2024-01-01T00:00:00Z'
-    },
-    'sarah.johnson@tenant1.com': {
-      id: 'user-2',
-      name: 'Sarah Johnson',
-      email: 'sarah.johnson@tenant1.com',
-      password: 'password123',
-      role: 'sales_manager',
-      permissions: ['crm.read', 'crm.write', 'sales.read', 'sales.write'],
-      avatar: null,
-      businessId: 'tenant1',
-      businessName: 'Acme Corporation',
-      title: 'Sales Manager',
-      department: 'Sales',
-      lastLogin: new Date(Date.now() - 86400000).toISOString(),
-      created_at: '2024-01-15T00:00:00Z'
-    }
-  },
-  'demo-corp': {
-    'admin@democorp.com': {
-      id: 'user-3',
-      name: 'Emily Davis',
-      email: 'admin@democorp.com',
-      password: 'demo123',
-      role: 'admin',
-      permissions: ['all'],
-      avatar: null,
-      businessId: 'demo-corp',
-      businessName: 'Demo Corporation',
-      title: 'Administrator',
-      department: 'IT',
-      lastLogin: new Date(Date.now() - 3600000).toISOString(),
-      created_at: '2024-02-01T00:00:00Z'
-    },
-    'mike.chen@democorp.com': {
-      id: 'user-4',
-      name: 'Mike Chen',
-      email: 'mike.chen@democorp.com',
-      password: 'password456',
-      role: 'sales_rep',
-      permissions: ['crm.read', 'crm.write', 'sales.read'],
-      avatar: null,
-      businessId: 'demo-corp',
-      businessName: 'Demo Corporation',
-      title: 'Sales Representative',
-      department: 'Sales',
-      lastLogin: new Date(Date.now() - 7200000).toISOString(),
-      created_at: '2024-02-15T00:00:00Z'
-    }
-  },
-  'enterprise-ltd': {
-    'ceo@enterprise-ltd.com': {
-      id: 'user-5',
-      name: 'Alexander Rodriguez',
-      email: 'ceo@enterprise-ltd.com',
-      password: 'enterprise2024',
-      role: 'ceo',
-      permissions: ['all'],
-      avatar: null,
-      businessId: 'enterprise-ltd',
-      businessName: 'Enterprise Solutions Ltd',
-      title: 'Chief Executive Officer',
-      department: 'Executive',
-      lastLogin: new Date(Date.now() - 1800000).toISOString(),
       created_at: '2024-01-01T00:00:00Z'
     }
   }
@@ -85,32 +21,11 @@ export const MOCK_USERS = {
 
 export const DEMO_CREDENTIALS = [
   {
-    label: 'Admin Demo (Acme Corp)',
-    businessId: 'tenant1',
-    email: 'test@example.com',
-    password: 'password',
-    description: 'Full access to all modules'
-  },
-  {
-    label: 'Sales Manager (Acme Corp)',
-    businessId: 'tenant1',
-    email: 'sarah.johnson@tenant1.com',
-    password: 'password123',
-    description: 'Sales and CRM access'
-  },
-  {
-    label: 'Admin Demo (Demo Corp)',
-    businessId: 'demo-corp',
-    email: 'admin@democorp.com',
-    password: 'demo123',
-    description: 'Alternative demo tenant'
-  },
-  {
-    label: 'CEO Enterprise',
-    businessId: 'enterprise-ltd',
-    email: 'ceo@enterprise-ltd.com',
-    password: 'enterprise2024',
-    description: 'Enterprise demo account'
+    label: 'Admin Account',
+    businessId: 'synthesq-demo',
+    email: 'admin@synthesq.com',
+    password: 'admin123',
+    description: 'Full access to all modules and features'
   }
 ]
 
